@@ -3,3 +3,6 @@ _build/
 *.native
 flap/flap
 flap/myocamlbuild_config.ml
+\#*
+*~
+*.hopix
