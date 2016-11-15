@@ -40,15 +40,11 @@ let alien_prefix_id = '`' (letter | digit | op | '_')+
 
 let alien_infix_id = alien_prefix_id '`'
 
-let var_id =
-    lower_letter (letter | digit | '_')*
-  | alien_prefix_id
+let id = lower_letter (letter | digit | '_')*
 
 let constr_id = (upper_letter | '_') (letter | digit | '_')*
 
-let type_con = lower_letter (letter | digit | '_')*
-
-let type_variable = '\'' lower_letter (letter | '_')*
+let type_variable = '\'' lower_letter (letter | digit | '_')*
 
 let int =
     digit+
@@ -66,8 +62,15 @@ rule token =
   | newline                        { next_line_and token lexbuf }
   | blank+                         { token lexbuf               }
   | "val"                          { VAL }
-  | "="                            { EQUALS }             
-  | var_id                         { VAR_ID (Lexing.lexeme lexbuf) }
+  | "="                            { EQUALS }
+  | "("                            { LPARAN }
+  | ")"                            { RPARAN }
+  | ","                            { COMMA }
+  | ":"                            { COLON }             
+  | "->"                           { ARROW }
+  | id                             { ID (Lexing.lexeme lexbuf) }
+  | type_variable                  { TYPE_VARIABLE (Lexing.lexeme lexbuf) }
+  | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }             
   | int                            { INT (Int32.of_string (Lexing.lexeme lexbuf)) }                     
   | eof                            { EOF       }
   (** comment **)

@@ -1,2 +1,31 @@
 {- ------------------------------------------------- -}
 {- vdefinition: Valeur simple -}
+
+val x = 5
+
+val x : y = 8
+val x:y =8
+val x:y=98
+val x : abcABC_ = 5
+val x : abcABC_ (type_1) = 5
+val x : a__dfg (type_1, type_2) = 0x65FF
+val x : a (type_1, type_2, type_3, type_4, type_5) = 0o1234567
+val x : a (t1, a(t1,t2), b(t1,t2)) = 25
+
+----------------------------------------------------
+
+val x : y -> z = 89
+val x:y->z=89
+val x : a -> y -> z -> w -> h = 0XFFCCAA1
+val x : y (t1,t2,t3->t4->t5,t4) = 54
+val x : y (t1,t2,t8(t5(t7,y1),t4),t11(t10),t4->t7->t8(t9->t10,t11)) = 87
+
+------------------------------------------------------
+
+val x : (y) = 87
+val x : y (t,(t2(t,t))) = 98
+
+------------------------------------------------------
+
+val x : 'aasAQSD__ = 58
+val x : y ('a1, 'a2, 'a3, b1 , 'a5, b2, 'a1->'aAAsdf564) = 0x5648F
