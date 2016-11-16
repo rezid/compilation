@@ -57,7 +57,8 @@ id:
        | n = PREFIX_ID {Id n}       
                 
 expr:
-       | l = located(literal;) { Literal l }                    
+       | l = located(literal;) { Literal l }
+       | n = located(id;) { Variable n }
 
 literal:
        | i = INT; { LInt i }

@@ -1,1 +1,16 @@
 {- var_id expression -}
+
+val x = a
+val x = abc
+val x = aBC
+val x = b09
+val x = a___
+
+val x = `Abc
+val x = `abc
+val x = `012
+val x = `+-*
+val x = `/<>=
+val x = `_
+
+val x = `skfhsdf>=>>+/__
