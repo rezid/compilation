@@ -1,1 +1,7 @@
-{- string expretions test-}
+{- string expression test-}
+
+val s = "zidane"
+val s = "\221\002\003"
+val s = "z\111\0xFF\0o1234567\0b110110c\\\'\n\t\b\r"
+val s = "abc\"abc"
+val s = ""

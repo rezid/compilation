@@ -5,7 +5,8 @@
 %token EOF
 %token<Int32.t> INT
 %token<char> CHAR                  
-%token<string> ID                  
+%token<string> ID
+%token<string> STRING                              
 %token <string> PREFIX_ID
 %token <string> TYPE_VARIABLE                 
 %token VAL
@@ -61,4 +62,4 @@ expr:
 literal:
        | i = INT; { LInt i }
        | c = CHAR; { LChar c }                   
-            
+       | s = STRING; { LString s }
