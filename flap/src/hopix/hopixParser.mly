@@ -4,6 +4,7 @@
    
 %token EOF
 %token<Int32.t> INT
+%token<char> CHAR                  
 %token<string> ID                  
 %token <string> PREFIX_ID
 %token <string> TYPE_VARIABLE                 
@@ -55,8 +56,9 @@ id:
        | n = PREFIX_ID {Id n}       
                 
 expr:
-       | l = located(literal;) { Literal l }
+       | l = located(literal;) { Literal l }                    
 
 literal:
        | i = INT; { LInt i }
+       | c = CHAR; { LChar c }                   
             

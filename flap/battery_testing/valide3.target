@@ -1,2 +1,34 @@
 {- ***--------------------------- *** -}
--- WHAT TO DO NEXT ? MAYBE IMPLEMENT EXPRETION GRAMMAR
+-- char expretion
+
+val x = '\100'
+val x = '\100'
+val x = '\200'
+val x = '\210'
+val x = '\250'
+
+val x = '\0xAA'
+val x = '\0x1C'
+val x = '\0x00'
+val x = '\0X01'
+val x = '\0XF0'
+
+val x = '\0o1234567'
+val x = '\0O1234567'
+
+val x = '\0b10101010'
+val x = '\0B10101010'
+
+val c = 'c'
+val c = 'B'
+val c = '5'
+val c = '*'
+val c = '$'
+val c = '"'
+
+val c = '\\'
+val c = '\''
+val c = '\n'
+val c = '\t'
+val c = '\b'
+val c = '\r'

@@ -71,7 +71,8 @@ rule token =
   | id                             { ID (Lexing.lexeme lexbuf) }
   | type_variable                  { TYPE_VARIABLE (Lexing.lexeme lexbuf) }
   | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }             
-  | int                            { INT (Int32.of_string (Lexing.lexeme lexbuf)) }                     
+  | int                            { INT (Int32.of_string (Lexing.lexeme lexbuf)) }
+  | char                           { CHAR (Lexing.lexeme lexbuf).[0] }           
   | eof                            { EOF       }
   (** comment **)
   | "{-"                           { treat_comment_v1 1 lexbuf }  
