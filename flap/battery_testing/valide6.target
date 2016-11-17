@@ -1,1 +1,15 @@
 {- constr_id expression -}
+
+val x = A
+val x = _
+val x = Aaa09
+
+val x = A[a]
+val x = A[a,b,c,d]
+val x = _[a1(a1,a->b,'c,(d)),a2->a3,'a4,(a5),(a6->a8)]
+
+val x = A(45)
+val x = A(1,2,3,4,5,6,7,8,9)
+val x = A(1,'c',"string", A('c'))
+
+val x = A[a1(a1,a->b,'c,(d)),a2->a3,'a4,(a5),(a6->a8)](1,'c',"string",a1,aA,B['a](10))
