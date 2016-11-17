@@ -80,7 +80,9 @@ expr:
        | l = located(literal;)                                                 { Literal l }
        | n = located(id;)                                                      { Variable n }
        | n = located(constructor;) tl = type_list; el = expr_list;             { Tagged(n,tl,el) }
+       | LPARAN; e = located(expr;) COLON; t = located(ty;) RPARAN;            { TypeAnnotation(e,t) } 
 
+                                                                                 
 type_list:
        |                                                                      { [] }
        | L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;                   { t::r }

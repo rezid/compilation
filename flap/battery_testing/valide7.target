@@ -1,1 +1,29 @@
 {- Annotation expression -}
+
+val x = (3:aB09)
+val x = (3:aB09(t1,t2,t3))
+val x = (3:a1->a2)
+val x = (3:'x)
+val x = (3:(aB09))
+
+val x = (3:a1->a2->a3->a4)
+val x = (3:a1->('a2->a3)->a5)
+
+val x : ty = ( 'c' : aB(ab(ab),ab->ab,'az,(ab)))
+val x : ty = ( 'c' : t1->t2->'t3->(t4))
+val x : ty = ( 'c' : 'az045 )
+val x : ty = ( 'c' : ('az046->a1 ))
+val x : ty = ( "string" : aB(ab(ab),ab->ab,'az,(ab)) )
+val x : ty = ( "string" : t1->t2->'t3->(t4) )
+val x : ty = ( "string" : 'az045 )
+val x : ty = ( "string" : ('az046->a1 ) )
+val x : ty = ( aA : aB(ab(ab),ab->ab,'az,(ab)) )
+val x : ty = ( aA : t1->t2->'t3->(t4) )
+val x : ty = ( aA : 'az045 )
+val x : ty = ( aA : ('az046->a1 ) )
+val x : ty = ( `Aa : aB(ab(ab),ab->ab,'az,(ab)) )
+val x : ty = ( `Aa : t1->t2->'t3->(t4) )
+val x : ty = ( `Aa : 'az045 )
+val x : ty = ( `Aa : ('az046->a1 ) )
+
+val x : ty = ( (((expr:ty):ty):ty) : ty )

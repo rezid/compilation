@@ -104,12 +104,28 @@ else
     exit 0
 fi
 
-
+MD5="$(md5sum ./battery_testing/valide7.hopix)"
 TEST_OUTPUT="$(./flap --source hopix -V true ./battery_testing/valide7.target)"
 
 if [ "$?" -eq "0" ]
 then
-    echo " [valide7.target] : success"
+    if [ "${MD5}" == "780c32a4eeffee87227cf030bc6e9703  ./battery_testing/valide7.hopix" ]
+    then
+        echo " [valide7.target] : success (md5 valide) "
+    else
+	echo " [valide7.target] : Error (md5 not valide) "
+    fi
+else
+    echo "${TEST_OUTPUT}"
+    exit 0
+fi
+
+
+TEST_OUTPUT="$(./flap --source hopix -V true ./battery_testing/valide8.target)"
+
+if [ "$?" -eq "0" ]
+then
+    echo " [valide8.target] : success"
 else
     echo "${TEST_OUTPUT}"
     exit 0
