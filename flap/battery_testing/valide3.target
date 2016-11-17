@@ -13,8 +13,8 @@ val x = '\0x00'
 val x = '\0X01'
 val x = '\0XF0'
 
-val x = '\0o1234567'
-val x = '\0O1234567'
+val x = '\0o223'
+val x = '\0O123'
 
 val x = '\0b10101010'
 val x = '\0B10101010'

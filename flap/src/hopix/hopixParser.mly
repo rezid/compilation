@@ -1,5 +1,22 @@
 %{
     open HopixAST
+    let to_char s =
+      
+        if s.[1] != '\\' then s.[1] else
+          match s.[2] with
+          | 'n' -> '\n'
+          | 't' -> '\t'
+          | 'b' -> '\b'
+          | 'r' -> '\r'
+          | '\'' -> '\''
+          | '\\' -> '\\'
+          | _ -> (match s.[3] with
+                  | 'x' | 'X' | 'o' | 'O' | 'b' | 'B' ->
+                     Char.chr (int_of_string (String.sub s 2 (String.length s - 3)))
+                  | _ -> 'z')
+
+
+           
 %}
    
 %token EOF
@@ -9,7 +26,7 @@
 %token<string> STRING                              
 %token<string> PREFIX_ID
 %token<string> CONSTR_ID                                 
-%token <string> TYPE_VARIABLE                 
+%token<string> TYPE_VARIABLE                 
 %token VAL
 %token EQUALS
 %token COLON

@@ -10,6 +10,28 @@
 
   let error lexbuf =
     error "during lexing" (lex_join lexbuf.lex_start_p lexbuf.lex_curr_p)
+
+  let to_char s =
+    if s.[1] != '\\' then s.[1] else
+      match s.[2] with
+      | 'n' -> '\n'
+      | 't' -> '\t'
+      | 'b' -> '\b'
+      | 'r' -> '\r'
+      | '\'' -> '\''
+      | '\\' -> '\\'
+      | _ -> Char.chr (int_of_string (String.sub s 2 (String.length s - 3)))
+
+  let atom_to_char s =
+    if s.[0] != '\\' then s.[0] else
+      match s.[1] with
+      | 'n' -> '\n'
+      | 't' -> '\t'
+      | 'b' -> '\b'
+      | 'r' -> '\r'
+      | '\'' -> '\''
+      | '\\' -> '\\'
+      | _ -> Char.chr (int_of_string (String.sub s 1 (String.length s - 1)))   
 }
 
 let newline = ('\010' | '\013' | "\013\010")
@@ -53,8 +75,6 @@ let int =
   | '0' ['b' 'B'] ['0' '1']+
 
 let char = '\'' (atom | '"') '\''
-
-let string = '"' (atom | ('\\' '"'))* '"'
   
 rule token =
   parse
@@ -75,8 +95,8 @@ rule token =
   | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }             
   | constr_id                      { CONSTR_ID (Lexing.lexeme lexbuf) }
   | int                            { INT (Int32.of_string (Lexing.lexeme lexbuf)) }
-  | char                           { CHAR (Lexing.lexeme lexbuf).[0] }
-  | string                         { STRING (Lexing.lexeme lexbuf) } 
+  | char                           { CHAR (to_char (Lexing.lexeme lexbuf)) }
+  | "\""                           { treat_string "" lexbuf } 
   | eof                            { EOF       }
   (** comment **)
   | "{-"                           { treat_comment_v1 1 lexbuf }  
@@ -94,3 +114,10 @@ and treat_comment_v2 =
   | newline { token lexbuf }
   | eof     { EOF }
   | _       { treat_comment_v2 lexbuf }
+and treat_string str =
+  parse
+  | "\\\""  { treat_string (str ^ "\"") lexbuf }
+  | atom    { treat_string (str ^ String.make 1 (atom_to_char(Lexing.lexeme lexbuf))) lexbuf }
+  | "\""    { STRING str }
+  | eof     { error lexbuf "You forgot to close the string with \"."}
+  | _       { error lexbuf "unexpected character in string." }
