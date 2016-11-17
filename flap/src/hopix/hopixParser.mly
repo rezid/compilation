@@ -35,22 +35,22 @@ program:
    
 definition_list:
        | v = located(vdefinition;) t = definition_list  { v::t }
-       | v = located(vdefinition;) {[v]}
+       | v = located(vdefinition;) { [v] }
                 
 vdefinition:
        | VAL; n = located(id;) EQUALS; e = located(expr;) { DefineValue(n,e) }
-       | VAL; n = located(id;) COLON; type_1; EQUALS; e = located(expr;) { DefineValue(n,e) }
+       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;) { DefineValue(n,e) }
 
-type_1:
-       | ID; {}
-       | ID; LPARAN; type_1; type_2; {}
-       | type_1; ARROW; type_1 {}
-       | LPARAN; type_1; RPARAN; {}
-       | TYPE_VARIABLE; {}
+ty:
+       | n = ID;                                               { TyCon( TCon n , [] ) }
+       | n = ID; LPARAN; t1 = located(ty); t2 = ty_rest;       { TyCon( TCon n , t1::t2 ) }
+       | t1 = located(ty;) ARROW; t2 = located(ty;)            { TyCon( TCon "", [t1]@[t2] ) }
+       | LPARAN; t = ty; RPARAN;                               { t }
+       | t = TYPE_VARIABLE;                                    { TyVar (TId t) } 
                                    
-type_2:
-       | COMMA; type_1; type_2 {}
-       | RPARAN {}
+ty_rest:
+       | COMMA; t1 = located(ty;) t2 = ty_rest;                { t1::t2 }
+       | RPARAN                                                
 
 id:
        | n = ID {Id n}
