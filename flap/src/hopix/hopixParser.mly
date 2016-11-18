@@ -1,22 +1,5 @@
 %{
-    open HopixAST
-    let to_char s =
-      
-        if s.[1] != '\\' then s.[1] else
-          match s.[2] with
-          | 'n' -> '\n'
-          | 't' -> '\t'
-          | 'b' -> '\b'
-          | 'r' -> '\r'
-          | '\'' -> '\''
-          | '\\' -> '\\'
-          | _ -> (match s.[3] with
-                  | 'x' | 'X' | 'o' | 'O' | 'b' | 'B' ->
-                     Char.chr (int_of_string (String.sub s 2 (String.length s - 3)))
-                  | _ -> 'z')
-
-
-           
+    open HopixAST           
 %}
    
 %token EOF
@@ -28,18 +11,26 @@
 %token<string> CONSTR_ID                                 
 %token<string> TYPE_VARIABLE                 
 %token VAL
+%token FUN                      
+%token AND
 %token EQUALS
 %token COLON
 %token LPARAN                  
 %token RPARAN         
 %token COMMA
 %token ARROW
+%token SEMICOLON       
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET       
 
+       
+%right SEMICOLON      
 %nonassoc VAL
+%nonassoc FUN
+%right ARROW 
 %nonassoc COMMA
-%right ARROW          
+%right EQUALS
+        
       
 %start<HopixAST.t> program
 
@@ -54,12 +45,48 @@ program:
        ;
    
 definition_list:
-       | v = located(vdefinition;) t = definition_list  { v::t }
-       | v = located(vdefinition;) { [v] }
-                
+       | v = located(vdefinition;) t = definition_list;    { v::t }
+       | v = located(vdefinition;)                         { [v] }
+                    
 vdefinition:
-       | VAL; n = located(id;) EQUALS; e = located(expr;) { DefineValue(n,e) }
-       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;) { DefineValue(n,e) }
+       | v_val = vdefinition_val  { DefineValue(fst v_val, snd v_val) }
+       | v_fun = vdefinition_fun  { DefineRecFuns(v_fun) }
+
+vdefinition_val:                                  
+       | VAL; n = located(id;) EQUALS; e = located(expr;)                { (n,e) }
+       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;)     { (n,e) }
+
+vdefinition_fun:
+       | FUN; fn = function_define; fd_r = function_define_rest;         { (fn::fd_r) }
+
+function_define_rest:
+       |                                                                              { [] }
+       | AND; fd = function_define; fd_r = function_define_rest;                      { fd:: fd_r }
+
+function_define:                                                                 
+       | n = located(id;) fd = located(function_def;)                                 { (n , fd) }
+                                      
+function_def:                                                                                             
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)              { FunctionDefinition(tvl,pl,e) }
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; ty; EQUALS; e = located(expr;)   { FunctionDefinition(tvl,pl,e) }
+                                                                            
+pattern_list_p:
+       | LPARAN; p = located(pattern;) pl = pattern_list_rest_p;                      { p::pl }
+
+pattern_list_rest_p:
+       | RPARAN;                                                                      { [] }
+       | COMMA; p = located(pattern;) pl = pattern_list_rest_p;                       { p::pl }                                                  
+
+ty_variable_list_sb:                                                                                              
+       |                                                                              { [] }
+       | L_SQUARE_BRACKET; tv = located(type_var); tvl = ty_variable_list_rest_sb;    { tv::tvl }
+
+ty_variable_list_rest_sb:                                                                   
+       | R_SQUARE_BRACKET;                                                            { [] }
+       | COMMA; tv = located(type_var;) tvl = ty_variable_list_rest_sb;               { tv::tvl }
+
+type_var:
+       | t = TYPE_VARIABLE;  { TId t }
 
 ty:
        | n = ID;                                                 { TyCon( TCon n , [] ) }
@@ -81,7 +108,9 @@ expr:
        | n = located(id;)                                                      { Variable n }
        | n = located(constructor;) tl = type_list; el = expr_list;             { Tagged(n,tl,el) }
        | LPARAN; e = located(expr;) COLON; t = located(ty;) RPARAN;            { TypeAnnotation(e,t) } 
+       | e1 = expr; SEMICOLON; e2 = expr;                                      { e2 }
 
+                                                        
                                                                                  
 type_list:
        |                                                                      { [] }
@@ -106,3 +135,6 @@ literal:
        | i = INT; { LInt i }
        | c = CHAR; { LChar c }                   
        | s = STRING; { LString s }
+
+pattern:
+       | n = located(id;) { PVariable n }

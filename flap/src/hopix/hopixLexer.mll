@@ -82,6 +82,8 @@ rule token =
   | newline                        { next_line_and token lexbuf }
   | blank+                         { token lexbuf               }
   | "val"                          { VAL }
+  | "fun"                          { FUN }
+  | "and"                          { AND }
   | "="                            { EQUALS }
   | "("                            { LPARAN }
   | ")"                            { RPARAN }
@@ -89,6 +91,7 @@ rule token =
   | "]"                            { R_SQUARE_BRACKET }
   | ","                            { COMMA }
   | ":"                            { COLON }             
+  | ";"                            { SEMICOLON }
   | "->"                           { ARROW }
   | id                             { ID (Lexing.lexeme lexbuf) }
   | type_variable                  { TYPE_VARIABLE (Lexing.lexeme lexbuf) }

@@ -1,2 +1,14 @@
 {- Sequencement expression -}
 
+val x = 3;4;5;6
+val x = 3;(4;5;6:t1);6
+val x = 3;(4;5;6:t1)
+val x = 3 ; Abc(4;5;6,7;8,9;10)
+
+{- Definition for function and mutually recursive functions -}
+
+fun x (p1,p2,p3) = 3
+fun x ['aA, 'ab, 'b09] (p1,p2,p3) = "string"
+fun f (x) : int->int = x
+fun f(x) = 5 and g(y) = 8
+
