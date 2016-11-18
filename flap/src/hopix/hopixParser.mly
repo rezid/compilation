@@ -23,14 +23,10 @@
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET       
 
-       
-%right SEMICOLON      
-%nonassoc VAL
-%nonassoc FUN
-%right ARROW 
-%nonassoc COMMA
-%right EQUALS
-        
+%right SEMICOLON
+%right ARROW       
+%left EQUALS
+      
       
 %start<HopixAST.t> program
 
@@ -49,12 +45,13 @@ definition_list:
        | v = located(vdefinition;)                         { [v] }
                     
 vdefinition:
-       | v_val = vdefinition_val  { DefineValue(fst v_val, snd v_val) }
-       | v_fun = vdefinition_fun  { DefineRecFuns(v_fun) }
+       | VAL; n = located(id;) EQUALS; e = located(expr;)  { DefineValue(n,e) } 
+       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;)  { DefineValue(n,e) }
+       | FUN; fn = function_define; fd_r = function_define_rest;  { DefineRecFuns(fn::fd_r) }
 
 vdefinition_val:                                  
-       | VAL; n = located(id;) EQUALS; e = located(expr;)                { (n,e) }
-       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;)     { (n,e) }
+       | VAL; n = located(id;) EQUALS; e = located(expr;)                { (n,e) } 
+       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;)     { (n,e) } 
 
 vdefinition_fun:
        | FUN; fn = function_define; fd_r = function_define_rest;         { (fn::fd_r) }
@@ -109,7 +106,8 @@ expr:
        | n = located(constructor;) tl = type_list; el = expr_list;             { Tagged(n,tl,el) }
        | LPARAN; e = located(expr;) COLON; t = located(ty;) RPARAN;            { TypeAnnotation(e,t) } 
        | e1 = expr; SEMICOLON; e2 = expr;                                      { e2 }
-
+       | v_val = vdefinition_val; SEMICOLON; e = located(expr;)                { Define(fst v_val, snd v_val, e) }
+       | v_fun = vdefinition_fun; SEMICOLON; e = located(expr;)                { DefineRec(v_fun, e) }
                                                         
                                                                                  
 type_list:
