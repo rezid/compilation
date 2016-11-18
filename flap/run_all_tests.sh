@@ -141,7 +141,7 @@ TEST_OUTPUT="$(./flap --source hopix -V true ./battery_testing/valide9.target)"
 
 if [ "$?" -eq "0" ]
 then
-    if [ "${MD5}" == "8eceb68fc03289d2ad691c5e56ff1fee  ./battery_testing/valide9.hopix" ]
+    if [ "${MD5}" == "bc9de074c0559a46d5e737757d06b759  ./battery_testing/valide9.hopix" ]
     then
         echo " [valide9.target] : success (md5 valide) "
     else

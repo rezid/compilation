@@ -52,3 +52,16 @@ val x  =
   fun y (a,b) = 13;
   val y = 45;
   "zidane"
+
+
+val x =
+  val y =
+    val z = 5; 4
+  ;
+  3
+
+val x =
+  val y =
+    fun x (x) = 5; 4
+  ;
+  3

@@ -23,7 +23,7 @@
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET       
 
-%right SEMICOLON
+%left SEMICOLON
 %right ARROW       
 %left EQUALS
       
