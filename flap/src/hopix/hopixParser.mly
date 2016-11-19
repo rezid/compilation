@@ -21,16 +21,21 @@
 %token ARROW
 %token ANTISLASH
 %token DOUBLE_ARROW
-%token PLUS
-       
+%token PLUS      
 %token SEMICOLON       
 %token L_SQUARE_BRACKET
-%token R_SQUARE_BRACKET       
-
+%token R_SQUARE_BRACKET
+       
+%token R_CURLY_BRACKET       
+%token QUESTION_MARK
+%token BAR       
+%token BAR_CURLY
+       
 %left SEMICOLON
 %right DOUBLE_ARROW      
 %right ARROW       
 %left EQUALS
+%nonassoc QUESTION_MARK      
 %left PLUS      
 %left LPARAN      
 %left L_SQUARE_BRACKET
@@ -124,7 +129,8 @@ expr:
        | e = located(expr;) el = expr_lst;                                                                        { Apply(e,[],el) }
        | e = located(expr;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;  el = expr_lst;                    { Apply(e,(t::r),el) }
        | ANTISLASH; fd = function_def_arrow;                                                                      { Fun fd }
-       | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     %prec PLUS                                        
+       | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     %prec PLUS
+       | e = located(expr;) QUESTION_MARK; bl = branch_list;                                                      { Case(e,bl) }
 
 ty_rest_sb:
        | COMMA; t = located(ty;) r = ty_rest_sb;                 { t::r }
@@ -158,3 +164,13 @@ binop:
 
 op:
        | PLUS;   { Id "+" }                 
+
+branch_list:
+       |  b1 = located(branch;) bl1 = branch_list_rest BAR_CURLY; b2 = located(branch) bl2 = branch_list_rest R_CURLY_BRACKET    { (b1 :: bl1) @ (b2::bl2) }
+
+branch_list_rest:
+       |                                                    { [] }                                                                                    
+       | BAR; b = located(branch;) bl = branch_list_rest;  { b::bl }
+
+branch:
+       | p = located(pattern;) DOUBLE_ARROW; e = located(expr;)    { Branch(p,e) }           
