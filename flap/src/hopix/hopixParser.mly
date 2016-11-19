@@ -129,7 +129,7 @@ expr:
        | n = located(constructor;) el = expr_list;                                                                { Tagged(n, [] ,el) }
        | n = located(constructor;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb; el = expr_list;             { Tagged(n,(t::r),el) }            
        | LPARAN; e = located(expr;) COLON; t = located(ty;) RPARAN;                                               { TypeAnnotation(e,t) } 
-       | e1 = expr; SEMICOLON; e2 = expr;                                                                         { e2 }
+       | e1 = located(expr); SEMICOLON; e2 = located(expr);                            { Define((Position.with_poss Lexing.dummy_pos Lexing.dummy_pos (Id "nothing")),e1,e2) }
        | v_val = vdefinition_val; SEMICOLON; e = located(expr;)                                                   { Define(fst v_val, snd v_val, e) }
        | v_fun = vdefinition_fun; SEMICOLON; e = located(expr;)                                                   { DefineRec(v_fun, e) }
        | e = located(expr;) el = expr_lst;                                                                        { Apply(e,[],el) }
