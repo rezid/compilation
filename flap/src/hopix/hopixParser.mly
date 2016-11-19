@@ -25,13 +25,19 @@
 %token SEMICOLON       
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET
-       
+%token BAR_CURLY       
 %token R_CURLY_BRACKET       
 %token QUESTION_MARK
 %token BAR       
-%token BAR_CURLY
+%token IF
+%token THEN
+%token ELIF
+%token ELSE
+       
        
 %left SEMICOLON
+%right ELSE
+%right ELIF          
 %right DOUBLE_ARROW      
 %right ARROW       
 %left EQUALS
@@ -131,6 +137,15 @@ expr:
        | ANTISLASH; fd = function_def_arrow;                                                                      { Fun fd }
        | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     %prec PLUS
        | e = located(expr;) QUESTION_MARK; bl = branch_list;                                                      { Case(e,bl) }
+       | IF; e1 = located(expr;) THEN; e2 = located(expr;) eil = elif_list; e = op_else;                          { If (([e1,e2]@eil), e) } 
+
+op_else:
+       |                           { None }    %prec ELSE                                                                                                                
+       | ELSE; e = located(expr;)  { Some e }
+
+elif_list:
+       |                                                                             { [] }     %prec ELIF             
+       | ELIF; e1 = located(expr;) THEN; e2 = located(expr;) eil = elif_list;        { (e1,e2)::eil }
 
 ty_rest_sb:
        | COMMA; t = located(ty;) r = ty_rest_sb;                 { t::r }
@@ -166,7 +181,8 @@ op:
        | PLUS;   { Id "+" }                 
 
 branch_list:
-       |  b1 = located(branch;) bl1 = branch_list_rest BAR_CURLY; b2 = located(branch) bl2 = branch_list_rest R_CURLY_BRACKET    { (b1 :: bl1) @ (b2::bl2) }
+       | option(BAR;)  b1 = located(branch;) bl1 = branch_list_rest BAR_CURLY;
+                option(BAR;) b2 = located(branch) bl2 = branch_list_rest R_CURLY_BRACKET    { (b1 :: bl1) @ (b2::bl2) }
 
 branch_list_rest:
        |                                                    { [] }                                                                                    

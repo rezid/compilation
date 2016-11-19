@@ -84,6 +84,10 @@ rule token =
   | "val"                          { VAL }
   | "fun"                          { FUN }
   | "and"                          { AND }
+  | "if"                           { IF }
+  | "then"                         { THEN }
+  | "elif"                         { ELIF }
+  | "else"                         { ELSE }
   | "="                            { EQUALS }
   | "("                            { LPARAN }
   | ")"                            { RPARAN }
