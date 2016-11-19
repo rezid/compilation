@@ -88,6 +88,8 @@ rule token =
   | "then"                         { THEN }
   | "elif"                         { ELIF }
   | "else"                         { ELSE }
+  | "ref"                          { REF }
+  | ":="                           { AFFECT }
   | "="                            { EQUALS }
   | "("                            { LPARAN }
   | ")"                            { RPARAN }

@@ -1,106 +1,17 @@
-  {- if then else -}
+{- priority of := -}
 
-val x =
-  if x then y
---------------------------------
-val x =
-  if x then y else z
---------------------------------
-val x =
- if x then y
-   elif e1 then 5
-   elif e2 then 2
-   elif e3 then 3
----------------------------------
-val x = 
- if x then y
-   elif e1 then 1
-   elif e2 then 2
-   elif e3 then 3
-   else z
-----------------------------------
-----------------------------------
-----------------------------------
-val x =
-  if y then 3
-  elif 5 then 6;
-  8
-----------------------------------
-val x =
-  if y then 3
-  elif 5 then 6 ?
-    p=>1
-    |{s=>2}
-------------------------------------
-val x =
-  if y then 3
-  elif 5 then 5 + 6
------------------------------------
-val x =
-  if y then 3
-  elif 5 then A[p1](5)
-----------------------------------
-val x =
-  if y then 3
-  elif 5 then 3
-  elif 6 then 4
-----------------------------------
-val x =
-  if y then 3
-  elif 5 then 9
-  elif 6 then 10
-  else 50;60
----------------------------------
-val x =
-  if y then 3
-  elif 5 then 5
-  elif 6 then 8
-  else 50?
-     p=>4
-     |{p=>5}
-----------------------------------
-val x =
-  if y then 3
-  elif 5 then 8
-  elif 6 then 9
-  else 50+50
---------------------------------
-val x =
-  if y then 3
-  elif 5 then 8
-  elif 6 then 8
-  else Add[p1](5)
----------------------------------
-val x =
-  if x then
-    if y then 3
-    elif 5 then 1
-    elif 6 then 8
-    elif 7 then 8
-    else 18
----------------------------------
----------------------------------
-val x =
-  if y then 3
-  else 5;
-  8
-----------------------------------
-val x =
-  if y then 3
-  else 5 ?
-    p=>1
-    |{s=>2}
-------------------------------------
-val x =
-  if y then 3
-  else 5 + 6
------------------------------------
-val x =
-  if y then 3
-  else A[p1](5)
------------------------------------
+val x = ref 1 + 2
+val x = ref (1 + 2)
 
-val x =
-  if y then 3
-  else 5
- 
+val x = ref u ? _ => 1
+val x = (ref u) ? _ => 1
+
+val x = ref ref u
+
+val x = ref u; v
+
+val x = ref u := v
+val x = ref (u := v)
+
+val x = ref f (x)
+val x = (ref f) (x)

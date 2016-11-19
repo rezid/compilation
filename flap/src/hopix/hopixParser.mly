@@ -33,18 +33,23 @@
 %token THEN
 %token ELIF
 %token ELSE
+%token REF
+%token AFFECT       
        
        
 %left SEMICOLON
 %right ELSE
 %right ELIF          
 %right DOUBLE_ARROW      
-%right ARROW       
+%right ARROW
+%right AFFECT       
 %left EQUALS
 %nonassoc QUESTION_MARK      
 %left PLUS      
 %left LPARAN      
 %left L_SQUARE_BRACKET
+%nonassoc REF
+      
       
 %start<HopixAST.t> program
 
@@ -138,7 +143,10 @@ expr:
        | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     %prec PLUS
        | e = located(expr;) QUESTION_MARK; bl = branch_list;                                                      { Case(e,bl) }
        | IF; e1 = located(expr;) THEN; e2 = located(expr;) eil = elif_list; e = op_else;                          { If (([e1,e2]@eil), e) } 
+       | REF; e = located(expr;)                                                                                  { Ref e }
+       | e1 = located(expr;) AFFECT; e2 = located(expr;)       { Write(e1,e2) }
 
+                         
 op_else:
        |                           { None }    %prec ELSE                                                                                                                
        | ELSE; e = located(expr;)  { Some e }
