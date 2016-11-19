@@ -95,6 +95,7 @@ rule token =
   | "->"                           { ARROW }
   | "=>"                           { DOUBLE_ARROW }
   | "\\"                           { ANTISLASH }
+  | "+"                            { PLUS }       
   | id                             { ID (Lexing.lexeme lexbuf) }
   | type_variable                  { TYPE_VARIABLE (Lexing.lexeme lexbuf) }
   | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }             

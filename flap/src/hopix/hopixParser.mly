@@ -21,15 +21,17 @@
 %token ARROW
 %token ANTISLASH
 %token DOUBLE_ARROW
+%token PLUS
        
 %token SEMICOLON       
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET       
 
 %left SEMICOLON
-%right DOUBLE_ARROW   
+%right DOUBLE_ARROW      
 %right ARROW       
 %left EQUALS
+%left PLUS      
 %left LPARAN      
 %left L_SQUARE_BRACKET
       
@@ -121,7 +123,8 @@ expr:
        | v_fun = vdefinition_fun; SEMICOLON; e = located(expr;)                                                   { DefineRec(v_fun, e) }
        | e = located(expr;) el = expr_lst;                                                                        { Apply(e,[],el) }
        | e = located(expr;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;  el = expr_lst;                    { Apply(e,(t::r),el) }
-       | ANTISLASH; fd = function_def_arrow;                                                                            { Fun fd }                                                                                                        
+       | ANTISLASH; fd = function_def_arrow;                                                                      { Fun fd }
+       | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     %prec PLUS                                        
 
 ty_rest_sb:
        | COMMA; t = located(ty;) r = ty_rest_sb;                 { t::r }
@@ -149,3 +152,9 @@ literal:
 
 pattern:
        | n = located(id;) { PVariable n }
+
+binop:                    
+       | bo = located(op;)  { Variable bo }
+
+op:
+       | PLUS;   { Id "+" }                 
