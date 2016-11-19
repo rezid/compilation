@@ -25,6 +25,7 @@
 %token SEMICOLON       
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET
+%token L_CURLY_BRACKET       
 %token BAR_CURLY       
 %token R_CURLY_BRACKET       
 %token QUESTION_MARK
@@ -34,7 +35,9 @@
 %token ELIF
 %token ELSE
 %token REF
-%token AFFECT       
+%token AFFECT
+%token EXCLAMATION
+%token WHILE       
        
        
 %left SEMICOLON
@@ -49,7 +52,8 @@
 %left LPARAN      
 %left L_SQUARE_BRACKET
 %nonassoc REF
-      
+%nonassoc EXCLAMATION
+          
       
 %start<HopixAST.t> program
 
@@ -144,9 +148,12 @@ expr:
        | e = located(expr;) QUESTION_MARK; bl = branch_list;                                                      { Case(e,bl) }
        | IF; e1 = located(expr;) THEN; e2 = located(expr;) eil = elif_list; e = op_else;                          { If (([e1,e2]@eil), e) } 
        | REF; e = located(expr;)                                                                                  { Ref e }
-       | e1 = located(expr;) AFFECT; e2 = located(expr;)       { Write(e1,e2) }
+       | e1 = located(expr;) AFFECT; e2 = located(expr;)                                                          { Write(e1,e2) }
+       | EXCLAMATION; e = located(expr;)                                                                          { Read e }
+       | WHILE; e1 = located(expr;) L_CURLY_BRACKET; e2 = located(expr;) R_CURLY_BRACKET;                         { While(e1,e2) }
+       | LPARAN; e = expr; RPARAN;                                                                                { e }
 
-                         
+                                                                                                                    
 op_else:
        |                           { None }    %prec ELSE                                                                                                                
        | ELSE; e = located(expr;)  { Some e }

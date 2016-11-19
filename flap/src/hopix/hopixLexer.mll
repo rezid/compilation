@@ -88,6 +88,7 @@ rule token =
   | "then"                         { THEN }
   | "elif"                         { ELIF }
   | "else"                         { ELSE }
+  | "while"                        { WHILE }
   | "ref"                          { REF }
   | ":="                           { AFFECT }
   | "="                            { EQUALS }
@@ -96,9 +97,11 @@ rule token =
   | "["                            { L_SQUARE_BRACKET }
   | "]"                            { R_SQUARE_BRACKET }
   | "}"                            { R_CURLY_BRACKET }
+  | "!"                            { EXCLAMATION }
   | "?"                            { QUESTION_MARK }
   | "|"                            { BAR }
   | "|{"                           { BAR_CURLY }
+  | "{"                            { L_CURLY_BRACKET }
   | ","                            { COMMA }
   | ":"                            { COLON }             
   | ";"                            { SEMICOLON }
