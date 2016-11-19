@@ -19,11 +19,15 @@
 %token RPARAN         
 %token COMMA
 %token ARROW
+%token ANTISLASH
+%token DOUBLE_ARROW
+       
 %token SEMICOLON       
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET       
 
 %left SEMICOLON
+%right DOUBLE_ARROW   
 %right ARROW       
 %left EQUALS
 %left LPARAN      
@@ -67,7 +71,12 @@ function_define:
 function_def:                                                                                             
        | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)              { FunctionDefinition(tvl,pl,e) }
        | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; ty; EQUALS; e = located(expr;)   { FunctionDefinition(tvl,pl,e) }
-                                                                            
+
+function_def_arrow:                                                                                             
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; DOUBLE_ARROW; e = located(expr;)              { FunctionDefinition(tvl,pl,e) }
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; ty; DOUBLE_ARROW; e = located(expr;)   { FunctionDefinition(tvl,pl,e) }
+                                                                                       
+                                                                                       
 pattern_list_p:
        | LPARAN; p = located(pattern;) pl = pattern_list_rest_p;                      { p::pl }
 
@@ -112,7 +121,7 @@ expr:
        | v_fun = vdefinition_fun; SEMICOLON; e = located(expr;)                                                   { DefineRec(v_fun, e) }
        | e = located(expr;) el = expr_lst;                                                                        { Apply(e,[],el) }
        | e = located(expr;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;  el = expr_lst;                    { Apply(e,(t::r),el) }
-                                                                                                                    
+       | ANTISLASH; fd = function_def_arrow;                                                                            { Fun fd }                                                                                                        
 
 ty_rest_sb:
        | COMMA; t = located(ty;) r = ty_rest_sb;                 { t::r }

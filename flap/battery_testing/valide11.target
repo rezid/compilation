@@ -1,3 +1,15 @@
 {- Function anonyme expression -}
 
 
+val x =
+   \(p1,p2) => 4
+
+val x = \ ['aA1,'aA2] (p1,p2) => "zidane"
+
+----------------------
+
+val x = \(x,y) => 13; 45
+
+val x =
+    \(x,y) => 13;
+    add[p,p](x,y)
