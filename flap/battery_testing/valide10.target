@@ -1,2 +1,25 @@
 {- Application expression -}
 
+val x = add(x,y)
+
+val x =
+  val y = 5;
+  f[t1](y)
+
+val y =
+  val z = 5;
+  f(z)
+
+val x = String [t1,t2] (x,y) 
+
+val x = String [t1,t2] 
+
+val x = 4 ;
+f[t1](x)
+
+
+val x =
+  fun add(y) = y;
+  add[t1](x)
+
+

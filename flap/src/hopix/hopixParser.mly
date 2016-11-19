@@ -26,7 +26,8 @@
 %left SEMICOLON
 %right ARROW       
 %left EQUALS
-      
+%left LPARAN      
+%left L_SQUARE_BRACKET
       
 %start<HopixAST.t> program
 
@@ -101,27 +102,30 @@ id:
        | n = PREFIX_ID {Id n}       
                 
 expr:
-       | l = located(literal;)                                                 { Literal l }
-       | n = located(id;)                                                      { Variable n }
-       | n = located(constructor;) tl = type_list; el = expr_list;             { Tagged(n,tl,el) }
-       | LPARAN; e = located(expr;) COLON; t = located(ty;) RPARAN;            { TypeAnnotation(e,t) } 
-       | e1 = expr; SEMICOLON; e2 = expr;                                      { e2 }
-       | v_val = vdefinition_val; SEMICOLON; e = located(expr;)                { Define(fst v_val, snd v_val, e) }
-       | v_fun = vdefinition_fun; SEMICOLON; e = located(expr;)                { DefineRec(v_fun, e) }
-                                                        
-                                                                                 
-type_list:
-       |                                                                      { [] }
-       | L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;                   { t::r }
+       | l = located(literal;)                                                                                    { Literal l }
+       | n = located(id;)                                                                                         { Variable n }
+       | n = located(constructor;) el = expr_list;                                                                { Tagged(n, [] ,el) }
+       | n = located(constructor;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb; el = expr_list;             { Tagged(n,(t::r),el) }            
+       | LPARAN; e = located(expr;) COLON; t = located(ty;) RPARAN;                                               { TypeAnnotation(e,t) } 
+       | e1 = expr; SEMICOLON; e2 = expr;                                                                         { e2 }
+       | v_val = vdefinition_val; SEMICOLON; e = located(expr;)                                                   { Define(fst v_val, snd v_val, e) }
+       | v_fun = vdefinition_fun; SEMICOLON; e = located(expr;)                                                   { DefineRec(v_fun, e) }
+       | e = located(expr;) el = expr_lst;                                                                        { Apply(e,[],el) }
+       | e = located(expr;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;  el = expr_lst;                    { Apply(e,(t::r),el) }
+                                                                                                                    
 
 ty_rest_sb:
        | COMMA; t = located(ty;) r = ty_rest_sb;                 { t::r }
        | R_SQUARE_BRACKET;                                       { [] }
                                                                                      
 expr_list:
-       |                                                  { [] }
+       |                                                  { [] } %prec ARROW
        | LPARAN; e = located(expr;) r = expr_rest_p;      { e::r }  
 
+expr_lst:
+       | LPARAN; e = located(expr;) r = expr_rest_p;      { e::r }  
+
+                                                            
 expr_rest_p:
        | COMMA; e = located(expr;) r = expr_rest_p;              { e::r }
        | RPARAN                                                  { [] }
