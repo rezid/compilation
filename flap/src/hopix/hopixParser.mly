@@ -8,20 +8,19 @@
 %token<string> ID
 %token<string> STRING                              
 %token<string> PREFIX_ID
+%token<string> INFIX_ID
 %token<string> CONSTR_ID                                 
 %token<string> TYPE_VARIABLE                 
 %token VAL
 %token FUN                      
 %token AND
-%token EQUALS
 %token COLON
 %token LPARAN                  
 %token RPARAN         
 %token COMMA
 %token ARROW
 %token ANTISLASH
-%token DOUBLE_ARROW
-%token PLUS      
+%token DOUBLE_ARROW      
 %token SEMICOLON       
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET
@@ -43,6 +42,24 @@
 %token UNDERSCORE
 %token AMPERSAND
 
+%token B_OR
+       
+%token B_AND
+       
+%token GT
+%token GE
+%token LT
+%token LE
+%token EQUALS
+       
+%token PLUS
+%token MOIN
+
+%token STAR       
+%token DIV
+
+
+       
 %right BAR
 %right AMPERSAND       
 %nonassoc COLON       
@@ -52,10 +69,13 @@
 %right ELIF          
 %right DOUBLE_ARROW      
 %right ARROW
-%right AFFECT       
-%left EQUALS
-%nonassoc QUESTION_MARK      
-%left PLUS      
+%right AFFECT
+%nonassoc QUESTION_MARK
+%left B_OR
+%left B_AND
+%left GT,LT,GE,LE,EQUALS
+%left PLUS MOIN
+%left STAR DIV      
 %left LPARAN      
 %left L_SQUARE_BRACKET
 %nonassoc REF
@@ -192,7 +212,7 @@ expr:
        | e = located(expr;) el = expr_lst;                                                                        { Apply(e,[],el) }
        | e = located(expr;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;  el = expr_lst;                    { Apply(e,(t::r),el) }
        | ANTISLASH; fd = function_def_arrow;                                                                      { Fun fd }
-       | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     %prec PLUS
+       | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2]) }     
        | e = located(expr;) QUESTION_MARK; bl = branch_list;                                                      { Case(e,bl) }
        | IF; e1 = located(expr;) THEN; e2 = located(expr;) eil = elif_list; e = op_else;                          { If (([e1,e2]@eil), e) } 
        | REF; e = located(expr;)                                                                                  { Ref e }
@@ -253,12 +273,23 @@ pattern_lst:
        | RPARAN;                                              { [] }
        | COMMA; p = located(pattern;) pl = pattern_lst;       { p::pl }
 
-binop:                    
+%inline binop:                    
        | bo = located(op;)  { Variable bo }
 
-op:
-       | PLUS;   { Id "+" }                 
-
+%inline op:
+       | PLUS;         { Id "+" }
+       | MOIN;         { Id "-" }
+       | STAR;         { Id "*" }
+       | DIV;          { Id "/" }
+       | GT;           { Id ">" }
+       | GE;           { Id ">=" }
+       | LT;           { Id "<" }
+       | LE;           { Id "<=" }
+       | B_OR;         { Id "||" }
+       | B_AND;        { Id "&&" }
+       | EQUALS;       { Id "=" }
+       | s = INFIX_ID  { Id s }                               
+                  
 branch_list:
        | option(BAR;)  b1 = located(branch;) bl1 = branch_list_rest BAR_CURLY;
                 option(BAR;) b2 = located(branch) bl2 = branch_list_rest R_CURLY_BRACKET    { (b1 :: bl1) @ (b2::bl2) }

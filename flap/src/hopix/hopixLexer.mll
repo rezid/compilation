@@ -114,9 +114,19 @@ rule token =
   | "=>"                           { DOUBLE_ARROW }
   | "\\"                           { ANTISLASH }
   | "+"                            { PLUS }
+  | "-"                            { MOIN }
+  | "*"                            { STAR }
+  | "/"                            { DIV }
+  | "<"                            { LT }
+  | "<="                           { LE }
+  | ">"                            { GT }
+  | ">="                           { GE }
+  | "||"                           { B_OR }
+  | "&&"                           { B_AND }
   | id                             { ID (Lexing.lexeme lexbuf) }
   | type_variable                  { TYPE_VARIABLE (Lexing.lexeme lexbuf) }
-  | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }             
+  | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }
+  | alien_infix_id                 { INFIX_ID (Lexing.lexeme lexbuf) }                          
   | constr_id                      { CONSTR_ID (Lexing.lexeme lexbuf) }
   | int                            { INT (Int32.of_string (Lexing.lexeme lexbuf)) }
   | char                           { CHAR (to_char (Lexing.lexeme lexbuf)) }
