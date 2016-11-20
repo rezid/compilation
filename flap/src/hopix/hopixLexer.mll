@@ -64,7 +64,8 @@ let alien_infix_id = alien_prefix_id '`'
 
 let id = lower_letter (letter | digit | '_')*
 
-let constr_id = (upper_letter | '_') (letter | digit | '_')*
+let constr_id = (upper_letter) (letter | digit | '_')*
+                | '_' (letter | digit | '_')+                         
 
 let type_variable = '\'' lower_letter (letter | digit | '_')*
 

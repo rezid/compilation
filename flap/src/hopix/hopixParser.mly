@@ -222,6 +222,9 @@ expr_rest_p:
 constructor:
        | n = CONSTR_ID;   { KId n }
        | n = UNDERSCORE;  { KId "_" }
+
+constructor_without_underscore:
+       | n = CONSTR_ID;   { KId n }
                                                                                  
 literal:
        | i = INT; { LInt i }
@@ -230,9 +233,8 @@ literal:
 
 pattern:
        | n = located(id;) { PVariable n }
-       | n = located(constructor;) { PTaggedValue (n,[])}
-
-
+       | n = located(constructor_without_underscore;) { PTaggedValue (n,[])}
+       | UNDERSCORE;  { PWildcard }
 
                     
 binop:                    

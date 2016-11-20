@@ -33,3 +33,4 @@ type t1 ('a,'a,'a) =
 
 fun x(a,b) = 4
 fun x(A,B) = 3
+fun x(_,_) = 5
