@@ -140,9 +140,13 @@ declare:
        | n = located(id;) COLON; t = located(ty;)                          { DeclareExtern(n,t) }
 
 vdefinition:
-       | VAL; n = located(id;) EQUALS; e = located(expr;)  { DefineValue(n,e) } 
-       | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;)  { DefineValue(n,e) }
-       | FUN; fn = function_define; fd_r = function_define_rest;  { DefineRecFuns(fn::fd_r) }
+       | VAL; n = located(id;) EQUALS; e = located(expr;)             { DefineValue(n,e) } 
+       | VAL; n = located(id;) COLON; tv = located(ty_vdef;)          { DefineValue(n,tv) }
+       | FUN; fn = function_define; fd_r = function_define_rest;      { DefineRecFuns(fn::fd_r) }
+
+ty_vdef:
+       | t = located(ty;) EQUALS; e = located(expr;)  { TypeAnnotation(e,t) }
+
 
 vdefinition_val:                                  
        | VAL; n = located(id;) EQUALS; e = located(expr;)                { (n,e) } 
@@ -160,7 +164,7 @@ function_define:
                                       
 function_def:                                                                                             
        | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)              { FunctionDefinition(tvl,pl,e) }
-       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; ty; EQUALS; e = located(expr;)   { FunctionDefinition(tvl,pl,e) }
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; tv = located(ty_vdef;)           { FunctionDefinition(tvl,pl,tv) }
 
 function_def_arrow:                                                                                             
        | tvl = ty_variable_list_sb; pl = pattern_list_p; DOUBLE_ARROW; e = located(expr;)              { FunctionDefinition(tvl,pl,e) }
