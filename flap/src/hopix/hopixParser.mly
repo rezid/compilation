@@ -188,7 +188,7 @@ type_var:
 ty:
        | n = ID;                                                 { TyCon( TCon n , [] ) }
        | n = ID; LPARAN; t1 = located(ty); t2 = ty_rest_p;       { TyCon( TCon n , t1::t2 ) }
-       | t1 = located(ty;) ARROW; t2 = located(ty;)              { TyCon( TCon "", t1::t2::[] ) }
+       | t1 = located(ty;) ARROW; t2 = located(ty;)              { TyCon( TCon "->", t1::t2::[] ) }
        | LPARAN; t = ty; RPARAN;                                 { t }
        | t = TYPE_VARIABLE;                                      { TyVar (TId t) } 
                                    
