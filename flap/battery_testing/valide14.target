@@ -34,3 +34,7 @@ type t1 ('a,'a,'a) =
 fun x(a,b) = 4
 fun x(A,B) = 3
 fun x(_,_) = 5
+
+fun x((A),(_)) = 8
+
+fun x(a:a,B:'b) = 8

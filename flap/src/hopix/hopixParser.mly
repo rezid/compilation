@@ -235,8 +235,11 @@ pattern:
        | n = located(id;) { PVariable n }
        | n = located(constructor_without_underscore;) { PTaggedValue (n,[])}
        | UNDERSCORE;  { PWildcard }
+       | LPARAN; p = pattern; RPARAN; { p }
+       | p = located(pattern;) COLON; t = located(ty;)  { PTypeAnnotation(p,t) }
 
-                    
+
+                                        
 binop:                    
        | bo = located(op;)  { Variable bo }
 
