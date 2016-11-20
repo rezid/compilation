@@ -38,3 +38,15 @@ fun x(_,_) = 5
 fun x((A),(_)) = 8
 
 fun x(a:a,B:'b) = 8
+
+fun x (5,4) = 10
+
+fun x (5|6|7|8,A) = 98
+
+fun x (5,'c',"zidane") = "allo"
+
+fun x (4 | 4 | 5) = 4
+
+fun x (4 & 4 & 5) = 4
+
+fun x (4 | 4 & 6 | 5 & 9) = 4

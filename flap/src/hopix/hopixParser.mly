@@ -41,6 +41,11 @@
 %token EXTERN
 %token TYPE       
 %token UNDERSCORE
+%token AMPERSAND
+
+%right BAR
+%right AMPERSAND       
+%nonassoc COLON       
        
 %left SEMICOLON
 %right ELSE
@@ -55,6 +60,8 @@
 %left L_SQUARE_BRACKET
 %nonassoc REF
 %nonassoc EXCLAMATION
+
+
           
       
 %start<HopixAST.t> program
@@ -237,8 +244,9 @@ pattern:
        | UNDERSCORE;  { PWildcard }
        | LPARAN; p = pattern; RPARAN; { p }
        | p = located(pattern;) COLON; t = located(ty;)  { PTypeAnnotation(p,t) }
-
-
+       | l = located(literal;)  { PLiteral l }
+       | p1 = located(pattern) BAR; p2 = located(pattern) { POr ([p1;p2]) }
+       | p1 = located(pattern) AMPERSAND; p2 = located(pattern) { PAnd ([p1;p2]) }                                                
                                         
 binop:                    
        | bo = located(op;)  { Variable bo }
