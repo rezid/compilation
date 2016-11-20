@@ -2,3 +2,4 @@ flapitest [ Sat Nov 19 20:20:45 PST 2016 ] [ 75c87eb6078a1b0f912fb589087be2475bf
 tests [ Sat Nov 19 20:46:30 PST 2016 ] [ 8fd263a0f22c3f6c0556b139d17e41ada9613310 ] make: Entering directory '/home/opam/source/flap/tests' make: Leaving directory '/home/opam/source/flap/tests'  | 
 tests-m1 [ Sat Nov 19 20:52:58 PST 2016 ] [ 02a760cec328d2f043938b5ca5424b5c23df8188 ] BAD:   6 / 7 GOOD:  53 / 135  | 
 tests-m1 [ Sat Nov 19 21:13:12 PST 2016 ] [ 54261eaf0e997aec3d1db40c72b211018eb8f04e ] BAD:   6 / 7 GOOD:  81 / 135  | 
+tests-m1 [ Sat Nov 19 21:38:13 PST 2016 ] [ 91931f4b5060483cbdd81a83134fc2c9ef3075be ] BAD:   7 / 7 GOOD:  83 / 135  | 
