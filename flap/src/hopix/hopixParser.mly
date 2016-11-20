@@ -25,7 +25,6 @@
 %token L_SQUARE_BRACKET
 %token R_SQUARE_BRACKET
 %token L_CURLY_BRACKET       
-%token BAR_CURLY       
 %token R_CURLY_BRACKET       
 %token QUESTION_MARK
 %token BAR       
@@ -54,8 +53,9 @@
 %token DIV
 
 
-       
+%nonassoc fix_bar_low       
 %right BAR
+%nonassoc fix_bar_high       
 %right AMPERSAND       
 %nonassoc COLON       
        
@@ -265,10 +265,15 @@ pattern:
        | LPARAN; p = pattern; RPARAN;                                                                       { p }
        | p = located(pattern;) COLON; t = located(ty;)                                                      { PTypeAnnotation(p,t) }
        | l = located(literal;)                                                                              { PLiteral l }
-       | p1 = located(pattern) BAR; p2 = located(pattern)                                                   { POr ([p1;p2]) }
+       | pr = x                                                                                             { POr pr } %prec fix_bar_low
        | p1 = located(pattern) AMPERSAND; p2 = located(pattern)                                             { PAnd ([p1;p2]) }                                                
-       | n = located(constructor;) LPARAN; p1 = located(pattern;) p2 = pattern_lst       { PTaggedValue (n,(p1::p2)) }
-       
+       | n = located(constructor;) LPARAN; p1 = located(pattern;) p2 = pattern_lst                          { PTaggedValue (n,(p1::p2)) }
+
+
+x:
+       | p2 = located(pattern) BAR; p1 = located(pattern;)             { [p2;p1]    } %prec fix_bar_high
+       | r = x; BAR; p2 = located(pattern)                             { r@[p2]     } %prec fix_bar_high
+                                                                                                            
 pattern_lst:
        | RPARAN;                                              { [] }
        | COMMA; p = located(pattern;) pl = pattern_lst;       { p::pl }
@@ -295,7 +300,7 @@ branch_list:
        | L_CURLY_BRACKET; option(BAR;)  b = located(branch;) bl = branch_list_rest R_CURLY_BRACKET;   { b::bl }
 
 branch_list_rest:
-       |                                                    { [] }                                                                                    
+       |                                                    { [] }      %prec BAR                                                                              
        | BAR; b = located(branch;) bl = branch_list_rest;  { b::bl }
 
 branch:

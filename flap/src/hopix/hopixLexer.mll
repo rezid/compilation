@@ -105,7 +105,6 @@ rule token =
   | "?"                            { QUESTION_MARK }
   | "|"                            { BAR }
   | "&"                            { AMPERSAND }
-  | "|{"                           { BAR_CURLY }
   | "{"                            { L_CURLY_BRACKET }
   | ","                            { COMMA }
   | ":"                            { COLON }             
