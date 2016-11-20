@@ -1,17 +1,31 @@
-{- priority of := -}
+val if1 = if 0 then 0
+val if2 = if 0 then 0 else 0
+val if3 = if 0 then 0 elif 0 then 0
+val if4 = if 0 then 0 elif 0 then 0 else 0
+val if5 = if 0 then 0 elif 0 then 0 elif 0 then 0
+val if6 = if 0 then 0 elif 0 then 0 elif 0 then 0 else 0
 
-val x = ref 1 + 2
-val x = ref (1 + 2)
+val if3b = if 0 then 0 else if 0 then 0
+val if4b = if 0 then 0 else if 0 then 0 else 0
+val if5b = if 0 then 0 else if 0 then 0 else if 0 then 0
+val if6b = if 0 then 0 else if 0 then 0 else if 0 then 0 else 0
 
-val x = ref u ? _ => 1
-val x = (ref u) ? _ => 1
+val pri_if1 = if 0 then if 0 then 0 else 0
 
-val x = ref ref u
+val ifif = if if a then b else c then d
 
-val x = ref u; v
+val ifseq1 = if a then b; c
+val ifseq2 = if a then b else c; d
+val ifseq3 = if a; b then b
 
-val x = ref u := v
-val x = ref (u := v)
+val iflet1 = if a then val x = b; c
+val iflet2 = if a then val x = b; c; d
+val iflet3 = if a then b else val x = c; d
 
-val x = ref f (x)
-val x = (ref f) (x)
+extern x : t1
+
+type t1 ('a,'a,'a) =
+   |  A(t1,t2,t3)
+   | B(t1)
+   | C
+   | D

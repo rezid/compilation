@@ -38,7 +38,8 @@
 %token AFFECT
 %token EXCLAMATION
 %token WHILE       
-       
+%token EXTERN
+%token TYPE       
        
 %left SEMICOLON
 %right ELSE
@@ -68,9 +69,48 @@ program:
        ;
    
 definition_list:
-       | v = located(vdefinition;) t = definition_list;    { v::t }
-       | v = located(vdefinition;)                         { [v] }
-                    
+       | v = located(vdefinition;) d = definition_list;                                { v::d }
+       | v = located(vdefinition;)                                                     { [v] }
+       | EXTERN; e = located(declare;) d = definition_list;                            { e::d }
+       | EXTERN; e = located(declare;)                                                 { [e] }
+       | TYPE; dt = located(define_type;) dl = definition_list;                        { dt::dl }
+       | TYPE; d = located(define_type;)                                               { [d] }                             
+
+define_type:
+       | t1 = located(ty_con;) t2 = ty_variable_list_p; t3 = ty_d                      { DefineType(t1,t2,t3) }
+
+ty_d:
+       |                                     { Abstract }                                                                         
+       | EQUALS;  l = first_d;              { DefineSumType(l) }
+
+first_d:                                    
+       | option(BAR;) t = tdefinition;                          { [t] }
+       | option(BAR;) t = tdefinition; dl = d_list_rest         { t::dl }
+
+d_list_rest:
+       | BAR; t = tdefinition;                          { [t] }
+       | BAR; t = tdefinition; dl = d_list_rest         { t::dl }
+                            
+tdefinition:
+       | c = located(constructor;)                                             { (c,[]) }
+       | c = located(constructor;)  LPARAN; t1 = located(ty); t2 = ty_rest_p;  { (c,t1::t2) }
+
+ty_con:    
+       | t = ID;  { TCon t }
+  
+ty_variable_list_p:                                                                                              
+       |                                                                              { [] }
+       | LPARAN; tv = located(type_var); tvl = ty_variable_list_rest_p;               { tv::tvl }
+
+ty_variable_list_rest_p:                                                                   
+       | RPARAN;                                                                     { [] }
+       | COMMA; tv = located(type_var;) tvl = ty_variable_list_rest_p;               { tv::tvl }
+
+
+         
+declare:                                                    
+       | n = located(id;) COLON; t = located(ty;)                          { DeclareExtern(n,t) }
+
 vdefinition:
        | VAL; n = located(id;) EQUALS; e = located(expr;)  { DefineValue(n,e) } 
        | VAL; n = located(id;) COLON; ty; EQUALS; e = located(expr;)  { DefineValue(n,e) }

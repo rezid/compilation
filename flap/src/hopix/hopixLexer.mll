@@ -90,6 +90,8 @@ rule token =
   | "else"                         { ELSE }
   | "while"                        { WHILE }
   | "ref"                          { REF }
+  | "extern"                       { EXTERN }
+  | "type"                         { TYPE }             
   | ":="                           { AFFECT }
   | "="                            { EQUALS }
   | "("                            { LPARAN }
