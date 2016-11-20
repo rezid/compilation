@@ -41,20 +41,15 @@
 %token TYPE       
 %token UNDERSCORE
 %token AMPERSAND
-
-%token B_OR
-       
-%token B_AND
-       
+%token B_OR     
+%token B_AND     
 %token GT
 %token GE
 %token LT
 %token LE
-%token EQUALS
-       
+%token EQUALS   
 %token PLUS
 %token MOIN
-
 %token STAR       
 %token DIV
 
@@ -75,7 +70,8 @@
 %left B_AND
 %left GT,LT,GE,LE,EQUALS
 %left PLUS MOIN
-%left STAR DIV      
+%left STAR DIV
+%left INFIX_ID      
 %left LPARAN      
 %left L_SQUARE_BRACKET
 %nonassoc REF
@@ -295,8 +291,8 @@ pattern_lst:
        | s = INFIX_ID  { Id (String.sub s 0 (String.length s - 1)) }
                   
 branch_list:
-       | option(BAR;)  b1 = located(branch;) bl1 = branch_list_rest BAR_CURLY;
-                option(BAR;) b2 = located(branch) bl2 = branch_list_rest R_CURLY_BRACKET    { (b1 :: bl1) @ (b2::bl2) }
+       | option(BAR;)  b = located(branch;) bl = branch_list_rest    { b::bl }
+       | L_CURLY_BRACKET; option(BAR;)  b = located(branch;) bl = branch_list_rest R_CURLY_BRACKET;   { b::bl }
 
 branch_list_rest:
        |                                                    { [] }                                                                                    
