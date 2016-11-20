@@ -277,17 +277,17 @@ pattern_lst:
        | bo = located(op;)  { Variable bo }
 
 %inline op:
-       | PLUS;         { Id "+" }
-       | MOIN;         { Id "-" }
-       | STAR;         { Id "*" }
-       | DIV;          { Id "/" }
-       | GT;           { Id ">" }
-       | GE;           { Id ">=" }
-       | LT;           { Id "<" }
-       | LE;           { Id "<=" }
-       | B_OR;         { Id "||" }
-       | B_AND;        { Id "&&" }
-       | EQUALS;       { Id "=" }
+       | PLUS;         { Id "`+" }
+       | MOIN;         { Id "`-" }
+       | STAR;         { Id "`*" }
+       | DIV;          { Id "`/" }
+       | GT;           { Id "`>" }
+       | GE;           { Id "`>=" }
+       | LT;           { Id "`<" }
+       | LE;           { Id "`<=" }
+       | B_OR;         { Id "`||" }
+       | B_AND;        { Id "`&&" }
+       | EQUALS;       { Id "`=" }
        | s = INFIX_ID  { Id s }                               
                   
 branch_list:

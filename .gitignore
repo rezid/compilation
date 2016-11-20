@@ -7,3 +7,4 @@ flap/myocamlbuild_config.ml
 *~
 *.hopix
 *cmd_help
+flapivor/students/
