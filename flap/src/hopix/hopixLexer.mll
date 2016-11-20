@@ -70,7 +70,7 @@ let constr_id = (upper_letter) (letter | digit | '_')*
 let type_variable = '\'' lower_letter (letter | digit | '_')*
 
 let int =
-    digit+
+  '-'?  digit+
   | '0' ['x' 'X'] (digit | ['a'-'f' 'A'-'F'])+
   | '0' ['o' 'O'] ['0'-'7']+
   | '0' ['b' 'B'] ['0' '1']+
