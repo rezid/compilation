@@ -292,7 +292,7 @@ pattern_lst:
        | B_OR;         { Id "`||" }
        | B_AND;        { Id "`&&" }
        | EQUALS;       { Id "`=" }
-       | s = INFIX_ID  { Id s }                               
+       | s = INFIX_ID  { Id (String.sub s 0 (String.length s - 1)) }
                   
 branch_list:
        | option(BAR;)  b1 = located(branch;) bl1 = branch_list_rest BAR_CURLY;
