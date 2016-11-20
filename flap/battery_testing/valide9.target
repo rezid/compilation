@@ -53,7 +53,7 @@ val x  =
   val y = 45;
   "zidane"
 
-{- error :
+{- error 
 val x =
   val y =
     val z = 5; 4
