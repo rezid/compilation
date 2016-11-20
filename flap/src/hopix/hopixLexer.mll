@@ -93,6 +93,7 @@ rule token =
   | "extern"                       { EXTERN }
   | "type"                         { TYPE }             
   | ":="                           { AFFECT }
+  | "_"                            { UNDERSCORE }
   | "="                            { EQUALS }
   | "("                            { LPARAN }
   | ")"                            { RPARAN }

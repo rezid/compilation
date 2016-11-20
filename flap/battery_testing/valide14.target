@@ -29,3 +29,7 @@ type t1 ('a,'a,'a) =
    | B(t1)
    | C
    | D
+
+
+fun x(a,b) = 4
+fun x(A,B) = 3

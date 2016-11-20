@@ -40,6 +40,7 @@
 %token WHILE       
 %token EXTERN
 %token TYPE       
+%token UNDERSCORE
        
 %left SEMICOLON
 %right ELSE
@@ -220,6 +221,7 @@ expr_rest_p:
                                                             
 constructor:
        | n = CONSTR_ID;   { KId n }
+       | n = UNDERSCORE;  { KId "_" }
                                                                                  
 literal:
        | i = INT; { LInt i }
@@ -228,7 +230,11 @@ literal:
 
 pattern:
        | n = located(id;) { PVariable n }
+       | n = located(constructor;) { PTaggedValue (n,[])}
 
+
+
+                    
 binop:                    
        | bo = located(op;)  { Variable bo }
 
