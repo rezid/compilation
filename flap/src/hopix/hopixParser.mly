@@ -64,7 +64,7 @@
 %right AMPERSAND       
 %nonassoc COLON       
        
-%left SEMICOLON
+%right SEMICOLON
 %right ELSE
 %right ELIF          
 %right DOUBLE_ARROW      

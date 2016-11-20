@@ -53,7 +53,7 @@ val x  =
   val y = 45;
   "zidane"
 
-
+{- error :
 val x =
   val y =
     val z = 5; 4
@@ -65,3 +65,5 @@ val x =
     fun x (x) = 5; 4
   ;
   3
+
+-}
