@@ -239,15 +239,20 @@ literal:
        | s = STRING; { LString s }
 
 pattern:
-       | n = located(id;) { PVariable n }
-       | n = located(constructor_without_underscore;) { PTaggedValue (n,[])}
-       | UNDERSCORE;  { PWildcard }
-       | LPARAN; p = pattern; RPARAN; { p }
-       | p = located(pattern;) COLON; t = located(ty;)  { PTypeAnnotation(p,t) }
-       | l = located(literal;)  { PLiteral l }
-       | p1 = located(pattern) BAR; p2 = located(pattern) { POr ([p1;p2]) }
-       | p1 = located(pattern) AMPERSAND; p2 = located(pattern) { PAnd ([p1;p2]) }                                                
-                                        
+       | n = located(id;)                                                                                   { PVariable n }
+       | n = located(constructor_without_underscore;)                                                       { PTaggedValue (n,[]) }
+       | UNDERSCORE;                                                                                        { PWildcard }
+       | LPARAN; p = pattern; RPARAN;                                                                       { p }
+       | p = located(pattern;) COLON; t = located(ty;)                                                      { PTypeAnnotation(p,t) }
+       | l = located(literal;)                                                                              { PLiteral l }
+       | p1 = located(pattern) BAR; p2 = located(pattern)                                                   { POr ([p1;p2]) }
+       | p1 = located(pattern) AMPERSAND; p2 = located(pattern)                                             { PAnd ([p1;p2]) }                                                
+       | n = located(constructor;) LPARAN; p1 = located(pattern;) p2 = pattern_lst       { PTaggedValue (n,(p1::p2)) }
+       
+pattern_lst:
+       | RPARAN;                                              { [] }
+       | COMMA; p = located(pattern;) pl = pattern_lst;       { p::pl }
+
 binop:                    
        | bo = located(op;)  { Variable bo }
 
