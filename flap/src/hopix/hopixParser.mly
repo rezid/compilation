@@ -67,11 +67,12 @@
 %left B_OR
 %left B_AND
 %left GT,LT,GE,LE,EQUALS
-%left INFIX_ID                    
+%left INFIX_ID
+%nonassoc REF
+%right AFFECT                        
 %left PLUS MOIN
 %left STAR DIV
-%nonassoc REF
-%right AFFECT          
+          
 %nonassoc QUESTION_MARK
       
 %nonassoc EXCLAMATION      
