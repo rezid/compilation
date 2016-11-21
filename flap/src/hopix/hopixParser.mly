@@ -64,12 +64,13 @@
 %right ELIF          
 %right DOUBLE_ARROW      
 %right ARROW
+%nonassoc REF
+%right AFFECT        
 %left B_OR
 %left B_AND
 %left GT,LT,GE,LE,EQUALS
 %left INFIX_ID
-%nonassoc REF
-%right AFFECT                        
+                       
 %left PLUS MOIN
 %left STAR DIV
           
