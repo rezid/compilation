@@ -22,7 +22,36 @@ fun x (a) =
   val x = 5;
   45
 
+fun x (a) =
+  val x = 5;
+  val y = 10;
+  val z = "zidane";
+  "HELOOIUDF"
 
+fun x (a) =
+  fun y (b) = 5;
+  12
+
+fun x (a) =
+  fun y (b) = 5;
+  fun z (c,d) = 10;
+  fun h (a,b,c,d) = 'c';
+  12
+
+
+fun x (a) =
+  fun y (b) = 5;
+  val x = 54;
+  fun y (a,b) = 13;
+  val y = 45;
+  "zidane"
+
+val x  =
+  fun y (b) = 5;
+  val x = 54;
+  fun y (a,b) = 13;
+  val y = 45;
+  "zidane"
 
 {- error 
 val x =

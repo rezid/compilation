@@ -138,7 +138,7 @@ declare:
 vdefinition:
        | VAL; n = located(id;) EQUALS; e = located(expr;)             { DefineValue(n,e) } 
        | VAL; n = located(id;) COLON; tv = located(ty_vdef;)          { DefineValue(n,tv) } 
-       | FUN; fn = function_define; fd_r = function_define_rest;      { DefineRecFuns(fn::fd_r) }
+       | FUN; fn = function_define_v1; fd_r = function_define_rest_v1;      { DefineRecFuns(fn::fd_r) }
 
 ty_vdef:
        | t = located(ty;) EQUALS; e = located(expr;)  { TypeAnnotation(e,t) } %prec fix_semicolon_low
@@ -155,11 +155,22 @@ function_define_rest:
        |                                                                              { [] }
        | AND; fd = function_define; fd_r = function_define_rest;                      { fd:: fd_r }
 
+function_define_rest_v1:
+       |                                                                              { [] }
+       | AND; fd = function_define_v1; fd_r = function_define_rest_v1;                      { fd:: fd_r }
+                                                                                        
 function_define:                                                                 
        | n = located(id;) fd = located(function_def;)                                 { (n , fd) }
+
+function_define_v1:                                                                 
+       | n = located(id;) fd = located(function_def_v1;)                                 { (n , fd) }
+                                      
+function_def_v1:                                                                                             
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)              { FunctionDefinition(tvl,pl,e) } 
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; tv = located(ty_vdef;)           { FunctionDefinition(tvl,pl,tv) }
                                       
 function_def:                                                                                             
-       | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)              { FunctionDefinition(tvl,pl,e) } %prec fix_semicolon_low
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)              { FunctionDefinition(tvl,pl,e) }
        | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; tv = located(ty_vdef;)           { FunctionDefinition(tvl,pl,tv) }
 
 function_def_arrow:                                                                                             
