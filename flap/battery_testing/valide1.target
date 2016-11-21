@@ -1,8 +1,18 @@
-fun odd (n : int) : int =
-  if n = 0 then false else
-  if n = 1 then true else
-    even (n - 1)
-and even (n : int) : int =
-  if n = 0 then true
-  elif n = 1 then false else
-    odd (n - 1)
+
+{- priority of := -}
+
+val x = ref 1 + 2
+val x = ref (1 + 2)
+
+val x = ref u ? _ => 1
+val x = (ref u) ? _ => 1
+
+val x = ref ref u
+
+val x = ref u; v
+
+val x = ref u := v
+val x = ref (u := v)
+
+val x = ref f (x)
+val x = (ref f) (x)

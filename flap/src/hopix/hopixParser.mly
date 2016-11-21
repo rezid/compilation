@@ -64,18 +64,21 @@
 %right ELIF          
 %right DOUBLE_ARROW      
 %right ARROW
-%right AFFECT
-%nonassoc QUESTION_MARK
 %left B_OR
 %left B_AND
 %left GT,LT,GE,LE,EQUALS
+%left INFIX_ID                    
 %left PLUS MOIN
 %left STAR DIV
-%left INFIX_ID      
+%nonassoc REF
+%right AFFECT          
+%nonassoc QUESTION_MARK
+      
+%nonassoc EXCLAMATION      
 %left LPARAN      
 %left L_SQUARE_BRACKET
-%nonassoc REF
-%nonassoc EXCLAMATION
+
+
 
 
           
