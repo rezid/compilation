@@ -68,7 +68,6 @@
 %right ELIF          
 %right DOUBLE_ARROW      
 %right ARROW
-%nonassoc fix_affect_low       
 %nonassoc REF
 %right AFFECT        
 %left B_OR
@@ -176,20 +175,15 @@ expr:
        | e = located(expr;) el = expr_list;                                                                       { Apply(e,[],el)                     }
        | e = located(expr;) L_SQUARE_BRACKET; t = located(ty); r = ty_rest_sb;  el = expr_list;                   { Apply(e,(t::r),el)                 }
        | ANTISLASH; fd = function_lambda;                                                                         { Fun fd                             }
-       | e1 = located(expr;) bo = located(binop;) e2 = located(expr_low)                                         { Apply(bo,[],[e1;e2])               }
+       | e1 = located(expr;) bo = located(binop;) e2 = located(expr;)                                             { Apply(bo,[],[e1;e2])               }
        | e = located(expr;) QUESTION_MARK; bl = branch_list;                                                      { Case(e,bl)                         }
        | IF; e1 = located(expr;) THEN; e2 = located(expr;) eil = elif_list; e = op_else;                          { If (([e1,e2]@eil), e)              } 
        | REF; e = located(expr;)                                                                                  { Ref e                              }
+       | e1 = located(expr;) AFFECT; e2 = located(expr;)                                                          { Write(e1,e2)                       }
        | EXCLAMATION; e = located(expr;)                                                                          { Read e                             }
        | WHILE; e1 = located(expr;) L_CURLY_BRACKET; e2 = located(expr;) R_CURLY_BRACKET;                         { While(e1,e2)                       }
-       | LPARAN; e = expr; RPARAN;                                                                                { e    }
-       | e = expr_high { e }
-                       
-expr_high:
-       | e1 = located(expr;) AFFECT; e2 = located(expr;)              { Write(e1,e2)                       }
-                                                 
-expr_low:
-       | e = expr;  { e }  %prec fix_affect_low                                                                                                            
+       | LPARAN; e = expr; RPARAN;                                                                                { e                                  }
+
 (* used in IF-THEN-ELIF-ELSE *)
 op_else:
        |                             { None   }    %prec ELSE
@@ -307,7 +301,7 @@ constructor_without_underscore:
 (* literals *)
 literal:
        | i = INT;       { LInt i    }
-       | MOIN;i = INT;  { LInt (Int32.sub Int32.zero i)    }                          
+       | MOIN;i = INT;       { LInt (Int32.sub Int32.zero i)    }                          
        | c = CHAR;      { LChar c   }                   
        | s = STRING;    { LString s }
 
@@ -340,4 +334,3 @@ branch:
        | B_AND;          { Id "`&&" }
        | EQUALS;         { Id "`="  }
        | s = INFIX_ID    { Id (String.sub s 0 (String.length s - 1)) }
-
