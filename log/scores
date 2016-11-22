@@ -17,3 +17,4 @@ tests-m1 [ Sun Nov 20 17:58:08 PST 2016 ] [ 5b2c2bf655ca8898e118bf5d8215a0fcb6b3
 tests-m1 [ Mon Nov 21 05:28:59 PST 2016 ] [ bb499cc8a6fa2c0fda61df782956be16181a1b1e ] BAD:   7 / 7 GOOD:  123 / 135  | 
 tests-m1 [ Mon Nov 21 05:37:47 PST 2016 ] [ de0c99ee9c909a3af3cff77eb4093e5382bdb840 ] BAD:   7 / 7 GOOD:  124 / 135  | 
 tests-m1 [ mardi 22 novembre 2016, 14:57:17 (UTC+0100) ] [ c40f2c683309ff7ea8115c9d0672d6cf082360b8 ] BAD:   7 / 7 GOOD:  123 / 135  | 
+tests-m1 [ mardi 22 novembre 2016, 16:18:14 (UTC+0100) ] [ 206130dd3c297e6aea4fb87cbb67219a7d088927 ] BAD:   7 / 7 GOOD:  125 / 135  | 
