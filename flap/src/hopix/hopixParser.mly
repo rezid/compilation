@@ -62,7 +62,7 @@
 %nonassoc fix_bar_high       
 %right AMPERSAND       
 %nonassoc COLON       
-%nonassoc fix_semicolon_low       
+%nonassoc fix_semicolon_low         
 %right SEMICOLON
 %right ELSE
 %right ELIF          
@@ -136,18 +136,23 @@ tdefinition:
        | c = located(constructor;)                                               { (c,[])     }
        | c = located(constructor;)  LPARAN; t1 = located(ty); t2 = ty_rest_p;    { (c,t1::t2) }
                                                               
-(* for function definition *)                                                              
-function_define:                                                                 
-       | n = located(id;) fd = located(function_def;)    { (n , fd) }
-                                 
+(* for function definition (first use) *)                                                              
+
 function_def:                                                                                             
        | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)          { FunctionDefinition(tvl,pl,e)  }
-       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; tv = located(ty_eq_expr;)    { FunctionDefinition(tvl,pl,tv) }
-                                                              
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; tv = located(ty_eq_expr;)    { FunctionDefinition(tvl,pl,tv) } 
+function_define_rest:
+       |                                                            { []        }
+       | AND; fd = function_define; fd_r = function_define_rest;    { fd:: fd_r }
+
+function_define:                                                                 
+       | n = located(id;) fd = located(function_def;)    { (n , fd) }
+                                                                                   
 (* for declaration of external value *)
 declare:                                                    
        | n = located(id;) COLON; t = located(ty;)    { DeclareExtern(n,t) }
 
+(*vdefinition*)                                            
 vdefinition:
        | VAL; n = located(id;) EQUALS; e = located(expr;)           { DefineValue(n,e)        } 
        | VAL; n = located(id;) COLON; tv = located(ty_eq_expr;)     { DefineValue(n,tv)       } 
@@ -212,12 +217,19 @@ vdefinition_val:
 
 (* function definition in expression *)
 vdefinition_fun:
-       | FUN; fn = function_define; fd_r = function_define_rest;    { (fn::fd_r) }
+       | FUN; fn = function_define_expression; fd_r = function_define_expression_rest;    { (fn::fd_r) }
 
-function_define_rest:
+function_define_expression_rest:
        |                                                            { []        }
-       | AND; fd = function_define; fd_r = function_define_rest;    { fd:: fd_r }
-                                                                                 
+       | AND; fd = function_define_expression; fd_r = function_define_expression_rest;    { fd:: fd_r }
+
+function_define_expression:                                                                 
+       | n = located(id;) fd = located(function_def_expression;)    { (n , fd) }                                      
+                                 
+function_def_expression:                                              
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; EQUALS; e = located(expr;)          { FunctionDefinition(tvl,pl,e)  }
+       | tvl = ty_variable_list_sb; pl = pattern_list_p; COLON; tv = located(ty_eq_expr;)    { FunctionDefinition(tvl,pl,tv) }
+                                                                      
 (* lambda expression *)
 function_lambda:                                                                                             
        | tvl = ty_variable_list_sb; pl = pattern_list_p; DOUBLE_ARROW; e = located(expr;)               { FunctionDefinition(tvl,pl,e) }
