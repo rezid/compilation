@@ -11,27 +11,23 @@
   let error lexbuf =
     error "during lexing" (lex_join lexbuf.lex_start_p lexbuf.lex_curr_p)
 
-  let to_char s =
-    if s.[1] != '\\' then s.[1] else
-      match s.[2] with
+  (* Function qui permet de transformer un string (contient un character échappé) en char  
+     ** op = 0 le string represente un charactere complet y compris les apostrophe delimitant
+     ** op = 1 le string est un atom (sans les apostrophe delimitant)
+  *)
+  let to_char ?(op=0) s = 
+    if s.[1-op] != '\\' then s.[1-op] else
+      match s.[2-op] with
       | 'n' -> '\n'
       | 't' -> '\t'
       | 'b' -> '\b'
       | 'r' -> '\r'
       | '\'' -> '\''
       | '\\' -> '\\'
-      | _ -> Char.chr (int_of_string (String.sub s 2 (String.length s - 3)))
-
-  let atom_to_char s =
-    if s.[0] != '\\' then s.[0] else
-      match s.[1] with
-      | 'n' -> '\n'
-      | 't' -> '\t'
-      | 'b' -> '\b'
-      | 'r' -> '\r'
-      | '\'' -> '\''
-      | '\\' -> '\\'
-      | _ -> Char.chr (int_of_string (String.sub s 1 (String.length s - 1)))   
+      | _ -> if op = 0 then
+          Char.chr (int_of_string (String.sub s 2 (String.length s - 3)))
+        else
+          Char.chr (int_of_string (String.sub s 1 (String.length s - 1)))   
 }
 
 let newline = ('\010' | '\013' | "\013\010")
@@ -82,75 +78,93 @@ rule token =
   (** Layout *)
   | newline                        { next_line_and token lexbuf }
   | blank+                         { token lexbuf               }
-  | "val"                          { VAL }
-  | "fun"                          { FUN }
-  | "and"                          { AND }
-  | "if"                           { IF }
-  | "then"                         { THEN }
-  | "elif"                         { ELIF }
-  | "else"                         { ELSE }
-  | "while"                        { WHILE }
-  | "ref"                          { REF }
+  | eof                            { EOF                        }
+
+  (** Keywords *)
+  | "val"                          { VAL    }
+  | "fun"                          { FUN    }
+  | "and"                          { AND    }
+  | "if"                           { IF     }
+  | "then"                         { THEN   }
+  | "elif"                         { ELIF   }
+  | "else"                         { ELSE   }
+  | "while"                        { WHILE  }
+  | "ref"                          { REF    }
   | "extern"                       { EXTERN }
-  | "type"                         { TYPE }             
-  | ":="                           { AFFECT }
-  | "_"                            { UNDERSCORE }
-  | "="                            { EQUALS }
-  | "("                            { LPARAN }
-  | ")"                            { RPARAN }
+  | "type"                         { TYPE   } 
+   
+  (** Punctuation *)         
+  | ":="                           { AFFECT           }
+  | "_"                            { UNDERSCORE       }
+  | "("                            { LPARAN           }
+  | ")"                            { RPARAN           }
   | "["                            { L_SQUARE_BRACKET }
   | "]"                            { R_SQUARE_BRACKET }
-  | "}"                            { R_CURLY_BRACKET }
-  | "!"                            { EXCLAMATION }
-  | "?"                            { QUESTION_MARK }
-  | "|"                            { BAR }
-  | "&"                            { AMPERSAND }
-  | "{"                            { L_CURLY_BRACKET }
-  | ","                            { COMMA }
-  | ":"                            { COLON }             
-  | ";"                            { SEMICOLON }
-  | "->"                           { ARROW }
-  | "=>"                           { DOUBLE_ARROW }
-  | "\\"                           { ANTISLASH }
+  | "}"                            { R_CURLY_BRACKET  }
+  | "!"                            { EXCLAMATION      }
+  | "?"                            { QUESTION_MARK    }
+  | "|"                            { BAR              }
+  | "&"                            { AMPERSAND        }
+  | "{"                            { L_CURLY_BRACKET  }
+  | ","                            { COMMA            }
+  | ":"                            { COLON            }             
+  | ";"                            { SEMICOLON        }
+  | "->"                           { ARROW            }
+  | "=>"                           { DOUBLE_ARROW     }
+  | "\\"                           { ANTISLASH        }
+
+  (** Operators *)
   | "+"                            { PLUS }
   | "-"                            { MOIN }
   | "*"                            { STAR }
-  | "/"                            { DIV }
+  | "/"                            { DIV  }
   | "<"                            { LT }
   | "<="                           { LE }
   | ">"                            { GT }
   | ">="                           { GE }
-  | "||"                           { B_OR }
-  | "&&"                           { B_AND }
-  | id                             { ID (Lexing.lexeme lexbuf) }
+  | "||"                           { B_OR   }
+  | "&&"                           { B_AND  }
+  | "="                            { EQUALS }
+
+  (** Identifiers *)
+  | id                             { ID (Lexing.lexeme lexbuf)            }
   | type_variable                  { TYPE_VARIABLE (Lexing.lexeme lexbuf) }
   | alien_prefix_id                { PREFIX_ID (Lexing.lexeme lexbuf) }
-  | alien_infix_id                 { INFIX_ID (Lexing.lexeme lexbuf) }                          
+  | alien_infix_id                 { INFIX_ID (Lexing.lexeme lexbuf)  }
   | constr_id                      { CONSTR_ID (Lexing.lexeme lexbuf) }
+  
+   (** Literals *)
   | int                            { INT (Int32.of_string (Lexing.lexeme lexbuf)) }
-  | char                           { CHAR (to_char (Lexing.lexeme lexbuf)) }
+  | char                           { CHAR (to_char (Lexing.lexeme lexbuf))        }
   | "\""                           { treat_string "" lexbuf } 
-  | eof                            { EOF       }
+
   (** comment **)
   | "{-"                           { treat_comment_v1 1 lexbuf }  
-  | "--"                           { treat_comment_v2 lexbuf }
+  | "--"                           { treat_comment_v2 lexbuf   }
+
   (** Lexing error. *)
   | _                              { error lexbuf "unexpected character." }
+
+(** parsing comment of type {* ... *} *)
 and treat_comment_v1 nested_level = 
   parse
   | "{-" { treat_comment_v1 (nested_level+1) lexbuf }
   | "-}" { if nested_level = 1 then token lexbuf else treat_comment_v1 (nested_level-1) lexbuf }
   | eof  { error lexbuf "You forgot to close a comment with \"-}\""}
   | _    { treat_comment_v1 nested_level lexbuf }
+
+(** parsing comment of type -- *)
 and treat_comment_v2 =
   parse
   | newline { token lexbuf }
   | eof     { EOF }
   | _       { treat_comment_v2 lexbuf }
+
+(** parsing string litterals *)
 and treat_string str =
   parse
   | "\\\""  { treat_string (str ^ "\"") lexbuf }
-  | atom    { treat_string (str ^ String.make 1 (atom_to_char(Lexing.lexeme lexbuf))) lexbuf }
+  | atom    { treat_string (str ^ String.make 1 (to_char ~op:1 (Lexing.lexeme lexbuf))) lexbuf }
   | "\""    { STRING str }
   | eof     { error lexbuf "You forgot to close the string with \"."}
-  | _       { error lexbuf "unexpected character in string." }
+  | _       { error lexbuf "Unexpected character in string." }
