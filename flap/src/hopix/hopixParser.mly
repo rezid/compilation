@@ -301,6 +301,7 @@ constructor_without_underscore:
 (* literals *)
 literal:
        | i = INT;       { LInt i    }
+       | MOIN;i = INT;       { LInt (Int32.sub Int32.zero i)    }                          
        | c = CHAR;      { LChar c   }                   
        | s = STRING;    { LString s }
 
