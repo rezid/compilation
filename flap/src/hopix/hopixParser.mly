@@ -334,3 +334,4 @@ branch:
        | B_AND;          { Id "`&&" }
        | EQUALS;         { Id "`="  }
        | s = INFIX_ID    { Id (String.sub s 0 (String.length s - 1)) }
+
