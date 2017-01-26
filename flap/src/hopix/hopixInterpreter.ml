@@ -241,7 +241,15 @@ and definition runtime d =
       environment = bind_identifier runtime.environment x v;
       memory
     }
-  | _ -> failwith("Must not happen.")
+
+  | DefineType _ -> 
+    runtime
+
+  | DeclareExtern _ ->
+    runtime
+
+  | DefineRecFuns (bar) -> 
+    failwith("TO DO on DefineRecFuns")
 
 and expression' environment memory e =
   expression (position e) environment memory (value e)
@@ -257,13 +265,116 @@ and expression position environment memory = function
     literal (value l), memory
 
   | Variable x ->
-      Environment.lookup (Position.position x) (Position.value x) environment, memory
-    
-  | Define(id, e1, e2) ->
-    let v, memory = expression' environment memory e1 in
-    expression' (bind_identifier environment id v) memory e2
+    Environment.lookup (Position.position x) (Position.value x) environment, memory
 
-  | _ -> failwith "Student! This is your job!"
+  | Tagged (k, _, elist) ->
+    let last_memory = ref memory in
+    let rec calcule_one elist m0 =
+      match elist  with
+      | [] -> last_memory := m0; []
+      | e0::rest -> 
+        let v0,m1 = expression' environment m0 e0 in
+        v0 :: (calcule_one rest m1) 
+    in
+    VTaggedValues(Position.value k,calcule_one elist memory), !last_memory
+
+  | TypeAnnotation(e,_) ->
+    expression' environment memory e
+
+  | Define(id, dv, e) ->
+    let v, memory = expression' environment memory dv in
+    let environment = bind_identifier environment id v in
+    expression' environment memory e
+
+  | Apply (e, _, eBar) ->
+    let val_e, m0 = expression' environment memory e in
+    begin
+      match val_e with
+      | VFun(m_list,e,e0) ->
+        let last_memory = ref memory in
+        let rec calcule_v eBar m0 =
+          match eBar with
+          | [] -> last_memory := m0; []
+          | e1::rest -> let v1,m1 = expression' environment m0 e1 in
+            v1::(calcule_v rest m1) in
+        let vBar = calcule_v eBar m0 in
+        let rec calcule_envirenement vBar mBar e0 =
+          begin
+            match vBar, mBar with
+            | [],[] -> e0
+            | v1::rest1, m1::rest2 -> let e1 = bind_pattern e0 m1 v1 in
+              calcule_envirenement rest1 rest2 e1
+            | _ -> failwith("error partial application ??")
+          end
+        in
+        let last_environment = calcule_envirenement vBar m_list e0 in
+        expression' last_environment !last_memory e
+      | VPrimitive(_, f) ->
+        let last_memory = ref memory in
+        let rec calcule_v eBar m0 =
+          match eBar with
+          | [] -> last_memory := m0; []
+          | e1::rest -> let v1,m1 = expression' environment m0 e1 in
+            v1::(calcule_v rest m1) in
+        let vBar = calcule_v eBar m0 in
+        f !last_memory vBar, !last_memory
+      | _ -> 
+        failwith("assert false because typing system ?")
+    end
+
+  | Fun (FunctionDefinition (_, mBar, e)) ->
+    VFun(mBar, e, environment),memory
+
+  | If (ifList,elseOption) ->
+    begin
+      let rec findTrue ifList =
+        match ifList with
+        | [] -> begin match elseOption with
+            | None -> failwith("not possible!")
+            | Some e -> e
+          end
+        | (c,t)::rest ->
+          let v, memory = expression' environment memory c in
+          begin match value_as_bool v with
+            | None -> failwith("not possible!")
+            | Some true -> t
+            | Some false -> findTrue rest
+          end
+      in
+      let eTrue = findTrue ifList in
+      expression' environment memory eTrue
+    end
+
+  | Ref(e) -> 
+    let v, m' = expression' environment memory e in
+    VAddress (Memory.allocate m' 1 v), memory
+
+  | Read (e) ->
+    let a, m' = expression' environment memory e in
+    failwith("TO DO on Read")
+
+  | Write (e1,e2) ->
+    failwith("TO DO on Write")
+
+  | Case (e, branchBar) ->
+    failwith("TO DO on Case")
+
+  | While(c,e) as l ->
+    let a, m' = expression' environment memory c in
+    begin match a with
+      | VBool false -> VUnit,m'
+      | VBool true -> 
+        let  b, m'' = expression' environment memory e in
+        begin match b with
+          | VUnit -> VUnit, m''
+          | _ -> failwith("TO DO on While1")
+
+        end
+      | _ ->  failwith("TO DO on While2")
+    end
+
+  | DefineRec (_) -> 
+    failwith("TO DO on DefineRec")
 
 and expressions environment memory es =
   let rec aux vs memory = function
@@ -278,6 +389,14 @@ and expressions environment memory es =
 
 and bind_identifier environment x v =
   Environment.bind environment (Position.value x) v
+
+and bind_pattern environment pat v = 
+  match Position.value pat, v with
+  | PWildcard, _ -> 
+    environment
+  | PVariable id, _ ->
+    Environment.bind environment (Position.value id) v
+  | _, _ -> failwith("TO DO on bind_pattern")
 
 and literal = function
   | LInt x -> VInt x
