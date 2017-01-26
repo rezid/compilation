@@ -347,14 +347,27 @@ and expression position environment memory = function
 
   | Ref(e) -> 
     let v, m' = expression' environment memory e in
-    VAddress (Memory.allocate m' 1 v), memory
+    VAddress (Memory.allocate m' 1 v), m'
+
 
   | Read (e) ->
     let a, m' = expression' environment memory e in
-    failwith("TO DO on Read")
+    begin match a with
+      | VAddress a -> 
+        Memory.read (Memory.dereference memory a) 1,m'
+      | _ -> 
+        failwith("not possible on Read (e)")
+    end
 
-  | Write (e1,e2) ->
-    failwith("TO DO on Write")
+  | Write (e,e') ->
+    let a, m' = expression' environment memory e in 
+    let v, m'' = expression' environment m' e' in
+    begin match a with
+      | VAddress a -> 
+        Memory.write (Memory.dereference m'' a) 1 v;
+        VUnit, m''
+      | _ -> failwith("not possible on Write (e,e')")
+    end
 
   | Case (e, branchBar) ->
     failwith("TO DO on Case")
