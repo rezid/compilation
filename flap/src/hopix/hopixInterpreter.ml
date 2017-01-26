@@ -354,7 +354,7 @@ and expression position environment memory = function
     let a, m' = expression' environment memory e in
     begin match a with
       | VAddress a -> 
-        Memory.read (Memory.dereference memory a) 1,m'
+        Memory.read (Memory.dereference memory a) 0,m'
       | _ -> 
         failwith("not possible on Read (e)")
     end
@@ -364,7 +364,7 @@ and expression position environment memory = function
     let v, m'' = expression' environment m' e' in
     begin match a with
       | VAddress a -> 
-        Memory.write (Memory.dereference m'' a) 1 v;
+        Memory.write (Memory.dereference m'' a) 0 v;
         VUnit, m''
       | _ -> failwith("not possible on Write (e,e')")
     end
