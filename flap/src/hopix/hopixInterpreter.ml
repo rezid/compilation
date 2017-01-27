@@ -6,6 +6,8 @@ open HopixAST
 let error positions msg =
   errorN "execution" positions msg
 
+exception MatchError
+
 (** Every expression of hopix evaluates into a [value]. *)
 type 'e gvalue =
   | VBool         of bool
@@ -370,7 +372,28 @@ and expression position environment memory = function
     end
 
   | Case (e, branchBar) ->
-    failwith("TO DO on Case")
+    let vs, m' = expression' environment memory e in 
+    let rec calcule_expression bBar =
+      begin match bBar with
+        | b::rest -> 
+          begin match Position.value b with
+            | Branch(p,e) ->
+              begin try 
+                  let environment = bind_pattern environment p vs in
+                  expression' environment m' e
+                with 
+                | MatchError -> calcule_expression rest
+              end
+            | _ -> failwith("not possible on  Case (e, branchBar)")
+          end
+
+
+        | _ -> failwith("not possible on  Case (e, branchBar)")
+      end
+    in
+    calcule_expression branchBar
+
+
 
   | While(c,e) as l ->
     let a, m' = expression' environment memory c in
@@ -407,8 +430,14 @@ and bind_pattern environment pat v =
   match Position.value pat, v with
   | PWildcard, _ -> 
     environment
+
   | PVariable id, _ ->
     Environment.bind environment (Position.value id) v
+
+  | PTaggedValues (k, xs), VTagged (k', vs) ->
+    if k = k' then List.fold_left2 bind_identifier environment xs vs 
+    else raise MatchError
+
   | _, _ -> failwith("TO DO on bind_pattern")
 
 and literal = function
