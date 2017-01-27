@@ -384,16 +384,12 @@ and expression position environment memory = function
                 with 
                 | MatchError -> calcule_expression rest
               end
-            | _ -> failwith("not possible on  Case (e, branchBar)")
+              | _ -> failwith("not possible on  Case (e, branchBar)")
           end
-
-
         | _ -> failwith("not possible on  Case (e, branchBar)")
       end
     in
     calcule_expression branchBar
-
-
 
   | While(c,e) as l ->
     let a, m' = expression' environment memory c in
@@ -434,8 +430,8 @@ and bind_pattern environment pat v =
   | PVariable id, _ ->
     Environment.bind environment (Position.value id) v
 
-  | PTaggedValues (k, xs), VTagged (k', vs) ->
-    if k = k' then List.fold_left2 bind_identifier environment xs vs 
+  | PTaggedValue (k, pBar), VTaggedValues (k', vBar) ->
+    if (Position.value k) = k' then List.fold_left2 bind_pattern environment pBar vBar 
     else raise MatchError
 
   | _, _ -> failwith("TO DO on bind_pattern")
