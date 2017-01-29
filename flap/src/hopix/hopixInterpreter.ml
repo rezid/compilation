@@ -250,8 +250,15 @@ and definition runtime d =
   | DeclareExtern _ ->
     runtime
 
-  | DefineRecFuns (bar) -> 
-    failwith("TO DO on DefineRecFuns")
+  | DefineRecFuns fs -> 
+    let fs = List.map (fun (x, e) -> (Position.value x, Position.value e)) fs in
+    let fs = List.map (fun (x, FunctionDefinition(_,mBar,e)) -> (x,mBar,e)) fs in
+    let environment = List.fold_left (fun env (f, mBar, e) -> 
+        Environment.bind env f (VFun(mBar,e,env))) runtime.environment fs in
+    {
+      environment;
+      memory = runtime.memory
+    } 
 
 and expression' environment memory e =
   expression (position e) environment memory (value e)
@@ -384,14 +391,14 @@ and expression position environment memory = function
                 with 
                 | MatchError -> calcule_expression rest
               end
-              | _ -> failwith("not possible on  Case (e, branchBar)")
+            | _ -> failwith("not possible on  Case (e, branchBar)")
           end
         | _ -> failwith("not possible on  Case (e, branchBar)")
       end
     in
     calcule_expression branchBar
 
-  | While(c,e) as l ->
+  | While(c,e) ->
     let a, m' = expression' environment memory c in
     begin match a with
       | VBool false -> VUnit,m'
@@ -405,8 +412,9 @@ and expression position environment memory = function
       | _ ->  failwith("TO DO on While2")
     end
 
-  | DefineRec (_) -> 
-    failwith("TO DO on DefineRec")
+  | DefineRec (fs,e) -> 
+    failwith("XXXX XXX XXX")
+
 
 and expressions environment memory es =
   let rec aux vs memory = function
