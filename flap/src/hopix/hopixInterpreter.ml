@@ -406,14 +406,14 @@ and expression position environment memory = function
     in
     calcule_expression branchBar
 
-  | While(eb,e) ->
+  | While(eb,e) as l ->
     let b, m' = expression' environment memory eb in
     begin match b with
       | VBool false -> VUnit,m'
       | VBool true -> 
         let  b, m'' = expression' environment m' e in
         begin match b with
-          | VUnit -> VUnit, m''
+          | VUnit -> expression' environment m'' ({value = l;position})
           | _ -> failwith("TO DO on While1")
 
         end
