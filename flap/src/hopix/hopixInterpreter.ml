@@ -253,12 +253,17 @@ and definition runtime d =
   | DefineRecFuns fs -> 
     let fs = List.map (fun (x, e) -> (Position.value x, Position.value e)) fs in
     let fs = List.map (fun (x, FunctionDefinition(_,mBar,e)) -> (x,mBar,e)) fs in
-    let environment = List.fold_left (fun env (f, mBar, e) -> 
-        Environment.bind env f (VFun(mBar,e,env))) runtime.environment fs in
+    let rec environment1 = List.fold_left (fun env (f, mBar, e) -> 
+        let e' = Environment.bind env f (VFun(mBar,e,env)) in
+        Environment.update (Position.position e) f e' (VFun(mBar,e,e'));
+        e'
+        ) runtime.environment fs in
     {
-      environment;
+      environment = environment1;
       memory = runtime.memory
     } 
+
+        
 
 and expression' environment memory e =
   expression (position e) environment memory (value e)
