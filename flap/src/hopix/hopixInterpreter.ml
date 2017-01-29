@@ -257,13 +257,13 @@ and definition runtime d =
         let e' = Environment.bind env f (VFun(mBar,e,env)) in
         Environment.update (Position.position e) f e' (VFun(mBar,e,e'));
         e'
-        ) runtime.environment fs in
+      ) runtime.environment fs in
     {
       environment = environment1;
       memory = runtime.memory
     } 
 
-        
+
 
 and expression' environment memory e =
   expression (position e) environment memory (value e)
@@ -344,19 +344,22 @@ and expression position environment memory = function
       let rec findTrue ifList =
         match ifList with
         | [] -> begin match elseOption with
-            | None -> failwith("not possible!")
-            | Some e -> e
+            | None -> None
+            | Some e -> Some e
           end
         | (c,t)::rest ->
           let v, memory = expression' environment memory c in
           begin match value_as_bool v with
             | None -> failwith("not possible!")
-            | Some true -> t
+            | Some true -> Some t
             | Some false -> findTrue rest
           end
       in
       let eTrue = findTrue ifList in
-      expression' environment memory eTrue
+      begin match eTrue with
+        | None -> VUnit,memory
+        | Some eTrue -> expression' environment memory eTrue
+      end
     end
 
   | Ref(e) -> 
