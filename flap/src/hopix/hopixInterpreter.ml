@@ -406,12 +406,12 @@ and expression position environment memory = function
     in
     calcule_expression branchBar
 
-  | While(c,e) ->
-    let a, m' = expression' environment memory c in
-    begin match a with
+  | While(eb,e) ->
+    let b, m' = expression' environment memory eb in
+    begin match b with
       | VBool false -> VUnit,m'
       | VBool true -> 
-        let  b, m'' = expression' environment memory e in
+        let  b, m'' = expression' environment m' e in
         begin match b with
           | VUnit -> VUnit, m''
           | _ -> failwith("TO DO on While1")
@@ -421,7 +421,7 @@ and expression position environment memory = function
     end
 
   | DefineRec (fs,e) -> 
-    failwith("XXXX XXX XXX")
+    failwith("to do DefineRec (fs,e)")
 
 
 and expressions environment memory es =
